@@ -82,4 +82,15 @@ macOS 개발 장비에서 다음을 확인했다.
 
 Windows 전용 자동 검사 4개는 macOS에서 생략했다. 이 검사는 한국어·공백·괄호 경로에서 실제 `.bat` 실행, 의존성 설치 전 도움말, 작업의 하위 프로세스 종료와 무관한 프로세스 보존을 확인한다. GitHub Actions에는 Windows/macOS, Node.js 22, Python 3.11에서 설치·테스트·타입 검사·빌드를 실행하도록 구성했다.
 
-**Windows 실기기와 GitHub Actions에서의 실행 결과는 아직 확인하지 않았다.** 이번 작업으로 Windows에서 실제 대한항공 조회가 성공했다고 주장하지 않는다.
+이 로컬 검증 단계에서는 Windows 실기기와 GitHub Actions에서 실행하지 않았다. 이후 공개 저장소의 실제 CI 결과는 다음과 같다.
+
+## 공개 저장소의 Windows·macOS 검사 — 2026-09-07
+
+`we-insub/Korean_air`의 최초 커밋 `6a35b7d`를 GitHub Actions에서 검사했다. [실행 결과](https://github.com/we-insub/Korean_air/actions/runs/34083177862)
+
+- Windows: Node.js 22·Python 3.11 환경에서 의존성 설치, Python 71개 테스트, TypeScript 87개 테스트, 타입 검사와 빌드 통과.
+- macOS: 같은 Node.js·Python 버전에서 의존성 설치, Python 67개 테스트(Windows 전용 4개 생략), TypeScript 87개 테스트, 타입 검사와 빌드 통과.
+- Windows 전용 검사에서는 한국어·공백·괄호 경로의 실제 `.bat` 도움말 실행과, 작업의 손자 프로세스 종료 및 무관한 프로세스 보존을 확인했다.
+- 공개 대상은 코드·문서·축약된 테스트 자료 39개다. 개인 조회 결과·진단 자료·로그인 세션·의존성 폴더는 포함하지 않았다.
+
+CI에서는 Chrome이나 대한항공 사이트를 열지 않았다. **Windows 실기기에서 실제 대한항공 조회까지 성공했는지는 아직 검증하지 않았다.**

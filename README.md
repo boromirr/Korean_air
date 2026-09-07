@@ -1,5 +1,7 @@
 # 마일리지로 떠나는 날
 
+[![Windows·macOS 자동 검사](https://github.com/we-insub/Korean_air/actions/workflows/test.yml/badge.svg)](https://github.com/we-insub/Korean_air/actions/workflows/test.yml)
+
 대한항공 마일리지 항공권을 찾을 때, **원하는 노선과 좌석 등급에 보너스 좌석 표시가 있는 날짜만 모아보는 개인용 로컬 프로그램**입니다.
 
 조회 결과에서 날짜를 고르면 새 Chrome 창의 대한항공 보너스 좌석 달력에 노선과 날짜를 자동으로 입력해 줍니다. 로그인이나 API 키 없이 공개 조회 화면을 이용합니다.
@@ -140,7 +142,9 @@ python3 -m unittest discover -s tests -p 'test_*.py'
 
 Windows에서는 위 명령의 `python3`를 `python` 또는 `py -3`로 바꾸세요. PowerShell에서는 `npm.cmd`를 사용하면 npm의 PowerShell 실행 정책 오류를 피할 수 있습니다.
 
-Windows에 맞는 프로세스 종료·통신과 설치·실행 파일을 구현했습니다. 현재 개발 장비에서 실제 항공사 조회까지 확인한 환경은 macOS이며, Windows 실기기에서의 항공사 조회는 아직 검증하지 않았습니다. 저장소의 GitHub Actions에는 Windows와 macOS에서 자동 테스트를 실행하도록 구성했습니다.
+GitHub Actions의 Windows·macOS 환경에서 설치, 자동 테스트, 타입 검사와 빌드가 모두 통과했습니다. Windows에서는 한글 경로의 실행 파일과 하위 프로세스 종료도 확인했습니다. [검사 결과 보기](https://github.com/we-insub/Korean_air/actions/runs/34083177862)
+
+실제 대한항공 조회까지 확인한 환경은 macOS이며, Windows 실기기에서의 항공사 조회는 아직 검증하지 않았습니다. 자동 테스트는 항공사에 접속하지 않습니다.
 
 - [자세한 사용법과 문제 해결](docs/usage.md)
 - [개발 환경 및 별도 CLI 사용법](docs/local-development.md)

@@ -200,6 +200,6 @@ Windows에서는 `python local_app.py --port 8766 --open` 또는 `start-windows.
 
 저장소를 다른 컴퓨터에 받으면 그 컴퓨터에서 설치하고 실행한 뒤 직접 조회하면 됩니다. GitHub에 코드를 올리는 것만으로 웹서비스가 배포되거나 카카오톡·이메일 알림이 작동하지는 않습니다.
 
-Windows용 호환 코드와 실행 파일을 추가했으며 GitHub Actions에 Windows·macOS 테스트를 구성했습니다. 현재 개발 장비에서는 macOS 동작을 검증했고, Windows 실기기에서 대한항공 조회까지 직접 확인한 것은 아닙니다.
+GitHub Actions에서 Windows·macOS의 설치·자동 테스트·타입 검사·빌드가 모두 통과했습니다. [검사 결과](https://github.com/we-insub/Korean_air/actions/runs/34083177862)를 확인할 수 있습니다. 자동 테스트는 항공사에 접속하지 않으며, 실제 대한항공 조회까지 직접 확인한 환경은 macOS입니다. Windows 실기기에서의 항공사 조회는 아직 검증하지 않았습니다.
 
 [README로 돌아가기](../README.md) · [개발 환경 안내](local-development.md)

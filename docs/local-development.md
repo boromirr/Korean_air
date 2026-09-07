@@ -8,7 +8,7 @@
 - Node.js 22 이상과 npm: 공개 좌석 조회와 자동 입력에 사용합니다.
 - Google Chrome: 설치된 Chrome을 새 창으로 실행합니다.
 
-Windows 11 이상과 macOS 14 이상을 대상으로 합니다. 실제 항공사 조회까지 확인한 개발 환경은 macOS, Python 3.8.10, Node.js 24.13.0입니다. Windows용 실행·통신 코드는 구현했으며 GitHub Actions에서 Windows와 macOS를 검사하도록 구성했습니다. Windows 실기기에서의 항공사 조회와 Linux 실행은 아직 검증하지 않았습니다.
+Windows 11 이상과 macOS 14 이상을 대상으로 합니다. 실제 항공사 조회까지 확인한 개발 환경은 macOS, Python 3.8.10, Node.js 24.13.0입니다. GitHub Actions에서는 Windows·macOS, Node.js 22, Python 3.11의 설치·테스트·타입 검사·빌드가 통과했습니다. Windows 실기기에서의 항공사 조회와 Linux 실행은 아직 검증하지 않았습니다.
 
 Windows에서는 `setup-windows.bat`로 설치한 뒤 `start-windows.bat`로 실행합니다. PowerShell에서 직접 실행하려면 프로젝트 폴더에서 다음 명령을 사용합니다.
 
@@ -76,7 +76,7 @@ npm run build
 
 Windows에서는 `python3`를 `python` 또는 `py -3`로, PowerShell에서는 `npm`을 `npm.cmd`로 바꾸면 됩니다.
 
-자동 테스트는 저장된 예제·모의 응답·로컬 Python 자식 프로세스를 사용하며 항공사에는 접속하지 않습니다. Windows 전용 검사는 한국어·공백 경로의 실제 `.bat` 실행과 하위 프로세스 종료를 확인하며, macOS에서는 생략됩니다. `.github/workflows/test.yml`은 두 운영체제에서 설치·테스트·타입 검사·빌드를 실행하도록 구성되어 있습니다. 워크플로 설정 자체가 Windows 검사 통과를 의미하지는 않으므로 GitHub에 올린 뒤 실행 결과를 확인하세요.
+자동 테스트는 저장된 예제·모의 응답·로컬 Python 자식 프로세스를 사용하며 항공사에는 접속하지 않습니다. Windows 전용 검사는 한국어·공백 경로의 실제 `.bat` 실행과 하위 프로세스 종료를 확인하며, macOS에서는 생략됩니다. `.github/workflows/test.yml`은 두 운영체제에서 설치·테스트·타입 검사·빌드를 실행합니다. [최초 Windows·macOS 검사](https://github.com/we-insub/Korean_air/actions/runs/34083177862)는 모두 통과했으며, 이후 변경은 해당 커밋의 검사 결과를 확인하세요.
 
 실사이트 조회는 테스트 명령과 별개이며, 공식 화면이 바뀐 부분을 확인할 필요가 있을 때만 범위를 정해 수행합니다. 결과와 실제 확인 범위는 [실행 검증 기록](verification-results.md)에 남깁니다.
 
