@@ -1,0 +1,48 @@
+name: Local tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: ${{ matrix.os }} / Node 22 / Python 3.11
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest]
+    env:
+      CI: "true"
+      PYTHONUTF8: "1"
+      PYTHONIOENCODING: utf-8
+      # These tests use local fixtures, subprocesses, and loopback HTTP only.
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install Node dependencies
+        run: npm ci
+      - name: Test Python server and Windows launchers
+        run: python -m unittest discover -s tests -p "test_*.py" -v
+      - name: Test TypeScript with local fixtures
+        run: npm test
+      - name: Check TypeScript types
+        run: npm run typecheck
+      - name: Build TypeScript
+        run: npm run build

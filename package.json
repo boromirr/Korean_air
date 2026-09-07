@@ -1,0 +1,27 @@
+{
+  "name": "korean-air-public-awards",
+  "version": "0.1.0",
+  "private": true,
+  "description": "대한항공 공개 보너스 좌석 날짜 조회 및 공식 달력 자동 입력",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "doctor": "node scripts/check-environment.mjs",
+    "typecheck": "tsc --noEmit",
+    "collect": "tsx scripts/collect.ts",
+    "test": "vitest run",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "cheerio": "1.2.0",
+    "playwright": "1.63.0"
+  },
+  "devDependencies": {
+    "@types/node": "26.4.1",
+    "tsx": "4.23.13",
+    "typescript": "7.0.2",
+    "vitest": "5.0.0"
+  }
+}

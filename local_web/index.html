@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>마일리지로 떠나는 날 · 개인용 조회</title>
+  <style>
+    :root{--navy:#162d53;--ink:#172b46;--muted:#66778b;--line:#dde6ee;--sky:#e8f6ff;--blue:#1669bd;--paper:#fff;--back:#f3f6fa;--green:#238369;--amber:#9b651b;--red:#a52f3a;--shadow:0 8px 30px #263b5510}
+    *{box-sizing:border-box}body{margin:0;background:var(--back);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;font-size:15px;line-height:1.55;word-break:keep-all;overflow-wrap:break-word}button,input,select{font:inherit}button,a,input,select{-webkit-tap-highlight-color:transparent}button{cursor:pointer}button:disabled{cursor:default;opacity:.55}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #77bdf4;outline-offset:3px}[hidden]{display:none!important}
+    .shell{max-width:1184px;margin:auto;padding:0 38px}.topbar{height:80px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}.brand{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:750;letter-spacing:-.5px}.brand-icon{width:33px;height:33px;display:grid;place-items:center;color:#fff;background:var(--navy);border-radius:11px}.local-tag{display:flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:50px;padding:6px 11px;font-size:12px;color:var(--muted);background:#fff}.local-tag:before{content:"";width:6px;height:6px;border-radius:50%;background:#62a783}.intro{padding:43px 0 26px;display:flex;justify-content:space-between;gap:24px;align-items:flex-end}.eyebrow{margin:0 0 7px;color:var(--blue);font-size:12px;font-weight:700;letter-spacing:1.4px}.intro h1{font-size:35px;line-height:1.25;letter-spacing:-1.5px;margin:0 0 10px}.intro p{margin:0;color:var(--muted);font-size:14px}.intro-note{max-width:230px;text-align:right;color:var(--muted);font-size:12px;line-height:1.8}.panel{background:var(--paper);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow)}.search-panel{padding:25px 26px 20px}.form-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:15px}.trip-options{display:inline-flex;padding:4px;background:#f0f4f8;border-radius:12px;gap:3px;border:0;margin:0}.trip-options label{position:relative;display:block;cursor:pointer}.trip-options input{position:absolute;opacity:0;width:1px;height:1px}.trip-options span{display:block;min-width:65px;padding:7px 15px;border-radius:9px;text-align:center;font-size:13px;font-weight:650;color:var(--muted)}.trip-options input:checked+span{background:#fff;box-shadow:0 2px 5px #25375113;color:var(--navy)}.trip-options input:focus-visible+span{outline:3px solid #77bdf4}.form-hint{font-size:12px;color:var(--muted)}.search-grid{display:grid;grid-template-columns:minmax(130px,1.1fr) 30px minmax(130px,1.1fr) minmax(140px,1fr) minmax(150px,1fr) auto;align-items:end;gap:13px}.field{display:flex;flex-direction:column;gap:7px;min-width:0}.field-label{font-size:12px;font-weight:650;color:#607087}.input-wrap{position:relative}.field input,.field select{width:100%;height:49px;padding:0 13px;border:1px solid #d5e0ea;border-radius:10px;background:#fff;color:var(--ink);font-size:14px;min-width:0}.field input:disabled,.field select:disabled{background:#f4f6f8;color:#718092}.field input[list]{font-weight:650;letter-spacing:.3px;text-transform:uppercase}.swap{height:36px;width:30px;margin-bottom:6px;border:0;border-radius:8px;background:transparent;color:#7790a7;font-size:21px}.swap:hover{background:var(--sky);color:var(--blue)}.primary{height:49px;padding:0 24px;white-space:nowrap;border:0;border-radius:11px;background:var(--navy);color:#fff;font-weight:650;font-size:14px;display:flex;align-items:center;justify-content:center;gap:9px}.primary:hover:not(:disabled){background:#244776}.return-fields{display:flex;gap:15px;margin-top:19px;padding-top:19px;border-top:1px solid #ecf0f5;align-items:flex-end}.return-fields .field{max-width:220px;flex:1}.return-fields p{margin:0 0 6px;color:var(--muted);font-size:12px;max-width:400px}.form-bottom{display:flex;justify-content:space-between;gap:16px;margin-top:18px;color:#77879a;font-size:11px}.form-bottom p{margin:0}.status{margin:15px 0 0;padding:12px 15px;display:flex;align-items:flex-start;gap:10px;font-size:13px;border-radius:11px;border:1px solid #d7e8f5;background:#f0f8fe;color:#356387}.status[data-kind="error"]{color:var(--red);border-color:#f0d8db;background:#fff5f5}.status[data-kind="success"]{color:var(--green);border-color:#d7eae4;background:#f1faf6}.status-dot{height:7px;width:7px;border-radius:50%;background:currentColor;margin-top:7px;flex-shrink:0}.status[data-kind="busy"] .status-dot{animation:pulse 1.2s infinite}.spinner{height:15px;width:15px;border:2px solid #ffffff55;border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite}.results-header{display:flex;justify-content:space-between;align-items:center;gap:18px;margin:32px 0 14px}.results-header h2{font-size:18px;letter-spacing:-.4px;margin:0}.results-header p{margin:3px 0 0;font-size:12px;color:var(--muted)}.source-link{font-size:12px;font-weight:650;color:var(--blue);text-decoration:none;white-space:nowrap}.source-link:hover{text-decoration:underline}.leg-panel{overflow:hidden;margin-bottom:18px}.leg-top{padding:23px 25px 18px;display:flex;justify-content:space-between;align-items:flex-start;gap:20px}.direction{font-size:11px;font-weight:650;color:var(--blue);background:var(--sky);border-radius:6px;padding:3px 7px;display:inline-block;margin-bottom:9px}.route-line{display:flex;align-items:center;gap:10px}.route-line h3{font-size:21px;letter-spacing:-.5px;margin:0;font-weight:700}.route-line .arrow{color:#a5b3c3;font-size:19px}.route-details{color:var(--muted);font-size:12px;margin-top:4px}.result-count{text-align:right;flex-shrink:0}.result-count strong{font-size:32px;line-height:1.15;letter-spacing:-1px;color:var(--navy)}.result-count span{font-size:13px;margin-left:5px;color:var(--muted)}.count-label{font-size:11px;color:var(--muted);margin-top:4px}.date-grid{padding:0 25px 23px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px}.date-card{position:relative;border:1px solid #dce5ed;border-radius:12px;background:#fff;color:var(--ink);min-height:104px;padding:12px;text-align:left;transition:border-color .15s,background .15s,transform .15s;display:flex;flex-direction:column;align-items:flex-start}.date-card:hover{border-color:#8bbdec;background:#f5fbff;transform:translateY(-1px)}.date-card.selected{background:#eaf5ff;border:1.5px solid var(--blue);padding:11.5px}.date-top{font-size:11px;color:var(--muted);display:flex;gap:5px;align-items:center}.date-number{font-size:25px;font-weight:650;letter-spacing:-.8px;line-height:1.6}.date-badge{font-size:10px;color:var(--green);display:flex;align-items:center;gap:4px;white-space:nowrap}.date-badge:before{content:"";height:4px;width:4px;background:var(--green);border-radius:50%}.selected-mark{position:absolute;top:10px;right:10px;color:var(--blue);font-size:12px}.leg-bottom{background:#f9fbfd;border-top:1px solid #e7edf3;padding:13px 25px;display:flex;justify-content:space-between;align-items:center;gap:15px;font-size:11px;color:#77879b;flex-wrap:wrap}.leg-bottom .timestamps{display:flex;flex-wrap:wrap;gap:6px 17px}.stale{color:var(--amber);font-weight:650}.cache-mark{color:#667c8f}.empty{padding:35px 25px 43px;text-align:center;color:var(--muted)}.empty-icon{width:45px;height:45px;border-radius:15px;background:#edf4fa;margin:0 auto 12px;display:grid;place-items:center;color:#7094b4;font-size:21px}.empty strong{font-size:14px;color:#455c75;display:block;margin-bottom:6px}.empty p{margin:0 auto;max-width:480px;font-size:12px;line-height:1.8}.selection-note{margin:0 25px 17px;padding:10px 13px;background:#eff7ff;border-radius:9px;font-size:12px;color:#3a6287}.journey{background:var(--navy);border-radius:15px;color:#fff;padding:19px 23px;display:flex;justify-content:space-between;gap:20px;align-items:center;margin-top:16px}.journey small{display:block;color:#b8cce3;font-size:11px;margin-bottom:4px}.journey strong{font-size:15px;font-weight:650}.journey-action{display:flex;flex-direction:column;align-items:flex-start;gap:7px;max-width:350px}.journey button{color:#fff;border:1px solid #ffffff55;background:transparent;padding:8px 12px;border-radius:9px;font-size:12px;text-align:left}.journey button:hover:not(:disabled){background:#ffffff15}.journey .handoff-hint{font-size:11px;margin:0;color:#b8cce3}.journey .handoff-status{font-size:12px;margin:0;color:#dcecff}.journey .handoff-status[data-kind="error"]{color:#ffd9dd}.footer{padding:20px 2px 37px;display:flex;justify-content:space-between;gap:30px;color:#8090a2;font-size:11px}.footer p{margin:0;line-height:1.8}.footer-brand{color:#60748c;white-space:nowrap;font-weight:600}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}@keyframes spin{to{transform:rotate(360deg)}}@keyframes pulse{50%{opacity:.25}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+    @media(max-width:1000px){.search-grid{grid-template-columns:minmax(110px,1fr) 24px minmax(110px,1fr) minmax(140px,1fr)}.search-grid .cabin-field{grid-column:1/4}.search-grid .primary{grid-column:4}.date-grid{grid-template-columns:repeat(5,minmax(0,1fr))}.shell{padding:0 25px}.form-hint{max-width:200px;text-align:right}}
+    @media(max-width:640px){.shell{padding:0 17px}.topbar{height:65px}.brand{font-size:14px}.local-tag{font-size:10px;padding:5px 8px}.intro{padding:29px 0 22px}.intro h1{font-size:29px}.intro p{font-size:12px}.intro-note{display:none}.search-panel{padding:19px 17px 17px;border-radius:16px}.form-top{margin-bottom:17px}.form-hint{font-size:10px;max-width:135px}.search-grid{grid-template-columns:minmax(0,1fr) 24px minmax(0,1fr);gap:12px 7px}.search-grid .month-field{grid-column:1/4}.search-grid .cabin-field{grid-column:1/4}.search-grid .primary{grid-column:1/4;margin-top:3px}.return-fields{flex-wrap:wrap;gap:12px}.return-fields p{flex-basis:100%;margin:0}.return-fields .field{max-width:none;min-width:120px}.form-bottom{display:block}.form-bottom p+p{margin-top:4px}.results-header{margin-top:25px;align-items:flex-start}.results-header h2{font-size:17px}.source-link{font-size:11px;margin-top:3px}.leg-top{padding:19px 18px 16px}.route-line h3{font-size:19px}.result-count strong{font-size:29px}.date-grid{padding:0 17px 20px;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.date-card{min-height:102px}.leg-bottom{padding:12px 18px;gap:8px}.leg-bottom .timestamps{flex-direction:column;gap:3px}.selection-note{margin:0 17px 15px}.journey{padding:18px;flex-direction:column;align-items:flex-start;gap:14px}.journey strong{font-size:14px}.footer{display:block;padding-top:15px}.footer-brand{margin-top:14px!important}.empty{padding-left:20px;padding-right:20px}}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar"><div class="brand"><span class="brand-icon" aria-hidden="true">↗</span> 마일리지로 떠나는 날</div><span class="local-tag">개인용 조회</span></header>
+    <main>
+      <section class="intro"><div><p class="eyebrow">대한항공 마일리지 항공권</p><h1>마일리지로 떠날 날을 찾아보세요</h1><p>마일리지 좌석이 있는 날짜를 한눈에 확인해 보세요.</p></div><div class="intro-note">로그인 없이 원하는 노선과 월을 조회해 보세요.<br>내 컴퓨터에서 쓰는 개인용 조회 도구예요.</div></section>
+      <section class="panel search-panel" aria-label="조회 조건">
+        <form id="search-form">
+          <div class="form-top"><fieldset class="trip-options"><legend class="sr-only">여정 종류</legend><label><input type="radio" name="tripType" value="ONE_WAY" checked><span>편도</span></label><label><input type="radio" name="tripType" value="ROUND_TRIP"><span>왕복</span></label></fieldset><span class="form-hint">조건을 바꾸면 저장된 결과를 보여드려요.</span></div>
+          <div class="search-grid">
+            <label class="field"><span class="field-label">출발 공항</span><input id="origin" name="origin" value="ICN" list="airports" maxlength="3" pattern="[A-Za-z]{3}" autocomplete="off" spellcheck="false" required aria-describedby="airport-hint"></label>
+            <button class="swap" type="button" id="swap" aria-label="출발 공항과 도착 공항 바꾸기">⇄</button>
+            <label class="field"><span class="field-label">도착 공항</span><input id="destination" name="destination" value="SIN" list="airports" maxlength="3" pattern="[A-Za-z]{3}" autocomplete="off" spellcheck="false" required aria-describedby="airport-hint"></label>
+            <label class="field month-field"><span class="field-label" id="month-label">가는 달</span><input id="month" name="month" type="month" required></label>
+            <label class="field cabin-field"><span class="field-label">좌석 등급</span><select name="cabin" id="cabin"><option value="economy">일반석</option><option value="premium">프리미엄석</option><option value="prestige" selected>비즈니스(프레스티지석)</option><option value="first" disabled>일등석(아직 조회할 수 없어요)</option></select></label>
+            <button class="primary" id="search-button" type="submit" disabled><svg id="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg><span id="button-text">마일리지 좌석 조회</span></button>
+          </div>
+          <div class="return-fields" id="return-fields" hidden><label class="field"><span class="field-label">오는 달</span><input type="month" name="returnMonth" id="return-month"></label><label class="field"><span class="field-label">최소 여행 기간(일)</span><input type="number" id="stay-days" name="minStayDays" value="1" min="0" max="365" step="1"></label><p>가는 날에서 입력한 일수 이상 지난 오는 날을 보여드려요.<br>두 항공편의 출발일을 기준으로 계산해요.</p></div>
+          <div class="form-bottom"><p id="airport-hint">공항 코드를 영문 세 글자로 입력해 주세요. 예: 인천 ICN · 싱가포르 SIN</p><p>마일리지로 예약하는 좌석만 보여드려요. 좌석 승급은 제외했어요.</p></div>
+        </form>
+        <div class="status" id="status" role="status" aria-live="polite"><span class="status-dot" aria-hidden="true"></span><span id="status-text">조회 화면을 준비하고 있어요.</span></div>
+      </section>
+      <section aria-labelledby="results-title" id="results-area" aria-busy="false">
+        <div class="results-header"><div><h2 id="results-title">마일리지 좌석이 있는 날짜</h2><p id="results-description">원하는 노선과 월을 선택한 뒤 조회해 주세요.</p></div><a class="source-link official-link" href="https://www.koreanair.com/booking/book-and-manage/award-seat-availability" target="_blank" rel="noopener noreferrer">대한항공 홈페이지 ↗</a></div>
+        <div id="results"><div class="panel empty"><div class="empty-icon" aria-hidden="true">▦</div><strong>이전에 조회한 결과를 불러오고 있어요.</strong><p>최근 조회한 결과가 있으면 다시 사용할 수 있어요.</p></div></div>
+        <div class="journey" id="journey" hidden><div><small>선택한 날짜</small><strong id="journey-text"></strong></div><div class="journey-action"><button id="open-airline-button" type="button" disabled aria-describedby="handoff-hint handoff-status">선택한 날짜로 대한항공 열기 ↗</button><p id="handoff-hint" class="handoff-hint">Chrome에서 선택한 조건을 자동으로 입력해요.</p><p id="handoff-status" class="handoff-status" role="status" aria-live="polite"></p></div></div>
+      </section>
+    </main>
+    <footer class="footer"><p>대한항공이 공개한 좌석 현황을 보여드려요. 실제 예약 가능 여부와 잔여 좌석은 대한항공에서 확인해 주세요.<br>선택한 날짜로 열면 새 Chrome 창에 조건을 입력해 드려요. 실제 예약은 대한항공에서 진행해 주세요.</p><p class="footer-brand">내 컴퓨터에서 쓰는 개인용 조회</p></footer>
+  </div>
+  <datalist id="airports"><option value="ICN">서울/인천</option><option value="GMP">서울/김포</option><option value="PUS">부산/김해</option><option value="CJU">제주</option><option value="SIN">싱가포르</option><option value="JFK">뉴욕/존 F. 케네디</option><option value="LAX">로스앤젤레스</option><option value="SFO">샌프란시스코</option><option value="SEA">시애틀</option><option value="HNL">호놀룰루</option><option value="NRT">도쿄/나리타</option><option value="HND">도쿄/하네다</option><option value="KIX">오사카/간사이</option><option value="FUK">후쿠오카</option><option value="CTS">삿포로/신치토세</option><option value="CDG">파리/샤를 드골</option><option value="LHR">런던/히스로</option><option value="FCO">로마/피우미치노</option><option value="FRA">프랑크푸르트</option><option value="AMS">암스테르담</option><option value="SYD">시드니</option><option value="BNE">브리즈번</option><option value="AKL">오클랜드</option><option value="BKK">방콕/수완나품</option><option value="HKG">홍콩</option><option value="TPE">타이베이/타오위안</option><option value="DPS">덴파사르/발리</option><option value="SGN">호찌민</option><option value="HAN">하노이</option><option value="DAD">다낭</option><option value="MNL">마닐라</option><option value="CEB">세부</option></datalist>
+  <script>
+    'use strict';
+    const $ = (id) => document.getElementById(id);
+    const form = $('search-form');
+    const fields = {origin:$('origin'), destination:$('destination'), month:$('month'), returnMonth:$('return-month'), cabin:$('cabin')};
+    const cabinNames = {economy:'일반석', premium:'프리미엄석', prestige:'프레스티지석'};
+    const cabinKeys = {economy:'economyAward', premium:'premiumAward', prestige:'prestigeAward'};
+    const airportNames = Object.fromEntries(Array.from($('airports').options, option => [option.value, option.label]));
+    let config, currentResult = null, currentParams = null, outboundDate = null, inboundDate = null, busy = false, handoffBusy = false, cacheVersion = 0, cacheTimer;
+    let sourceUrl = 'https://www.koreanair.com/booking/book-and-manage/award-seat-availability';
+    function node(tag, className, text) { const result = document.createElement(tag); if(className) result.className = className; if(text !== undefined) result.textContent = text; return result; }
+    function setStatus(message, kind = 'info') { $('status').dataset.kind = kind; $('status-text').textContent = message; }
+    function tripType() { return form.elements.tripType.value; }
+    function params() { return {origin:fields.origin.value.trim().toUpperCase(), destination:fields.destination.value.trim().toUpperCase(), month:fields.month.value, returnMonth:fields.returnMonth.value, cabin:fields.cabin.value, tripType:tripType()}; }
+    function valid(p) { return /^[A-Z]{3}$/.test(p.origin) && /^[A-Z]{3}$/.test(p.destination) && p.origin !== p.destination && /^\d{4}-\d{2}$/.test(p.month) && (p.tripType !== 'ROUND_TRIP' || /^\d{4}-\d{2}$/.test(p.returnMonth)); }
+    function dateObject(value) { if(!/^\d{4}-\d{2}-\d{2}$/.test(value || '')) return null; const d = new Date(value + 'T12:00:00+09:00'); return Number.isNaN(d.getTime()) ? null : d; }
+    function prettyDate(value) { const d = dateObject(value); return d ? new Intl.DateTimeFormat('ko-KR', {timeZone:'Asia/Seoul',month:'long',day:'numeric',weekday:'short'}).format(d) : value; }
+    function monthName(value) { const [y,m] = (value || '').split('-'); return y && m ? y + '년 ' + Number(m) + '월' : '조회할 달'; }
+    function timestamp(value) { if(!value) return '제공된 정보가 없어요'; const d = new Date(value); return Number.isNaN(d.getTime()) ? '확인할 수 없어요' : new Intl.DateTimeFormat('ko-KR', {timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).format(d); }
+    function stayDays() { return Math.max(0, Math.min(365, Math.trunc(Number($('stay-days').value) || 0))); }
+    function inboundAllowed(date) { if(!outboundDate) return false; const d = dateObject(date), start = dateObject(outboundDate); return Boolean(d && start && (d.getTime() - start.getTime()) / 86400000 >= stayDays()); }
+    function activeDates(leg) { const key = cabinKeys[currentParams?.cabin]; return [...new Map((leg.calendar?.dates || []).filter(d => d[key] === true && dateObject(d.date)).map(d => [d.date,d])).values()].sort((a,b) => a.date.localeCompare(b.date)); }
+    function handoffReady() { return Boolean(currentParams && valid(currentParams) && outboundDate && (currentParams.tripType !== 'ROUND_TRIP' || inboundDate)); }
+    function syncControls() {
+      const working = busy || handoffBusy;
+      for(const el of form.querySelectorAll('input,select,button')) el.disabled = working;
+      $('search-button').disabled = working || !config;
+      for(const card of document.querySelectorAll('.date-card')) card.disabled = working;
+      $('open-airline-button').disabled = working || !handoffReady();
+      $('open-airline-button').textContent = handoffBusy ? '대한항공에 선택한 조건을 입력하고 있어요…' : '선택한 날짜로 대한항공 열기 ↗';
+      $('results-area').setAttribute('aria-busy', String(working));
+    }
+    function setBusy(value) { busy = value; syncControls(); $('button-text').textContent = value ? '조회 중이에요' : '마일리지 좌석 조회'; $('search-icon').style.display = value ? 'none' : ''; form.querySelector('.spinner')?.remove(); if(value) $('search-button').prepend(node('span','spinner')); }
+    function setHandoffStatus(message, kind = 'info') { $('handoff-status').textContent = message; $('handoff-status').dataset.kind = kind; }
+    function resetHandoffStatus() { setHandoffStatus(!outboundDate ? '가는 날을 먼저 골라 주세요.' : currentParams?.tripType === 'ROUND_TRIP' && !inboundDate ? '오는 날도 골라 주세요.' : ''); }
+    function updateTripControls() { const round = tripType() === 'ROUND_TRIP'; $('return-fields').hidden = !round; fields.returnMonth.required = round; $('month-label').textContent = '가는 달'; }
+    async function api(url, options) { let response; try { response = await fetch(url, {...options,headers:{'Content-Type':'application/json',...(options?.headers || {})}}); } catch { throw new Error('조회 프로그램에 연결할 수 없어요. 프로그램 실행 창이 열려 있는지 확인해 주세요.'); } let data; try { data = await response.json(); } catch { throw new Error('조회 내용을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.'); } if(!response.ok) throw new Error(data.error?.message || data.message || '요청을 처리하지 못했어요.'); return data; }
+    function placeholder(title, message) { const empty = node('div','empty'); empty.append(node('div','empty-icon','▦'),node('strong',null,title),node('p',null,message)); return empty; }
+    function resetSelections() { outboundDate = null; inboundDate = null; resetHandoffStatus(); }
+    function showResult(result, p) { currentResult = result; currentParams = {...p}; resetSelections(); renderResults(); }
+    function renderLeg(leg) {
+      const inbound = leg.direction === 'inbound';
+      const section = node('section','panel leg-panel');
+      section.setAttribute('aria-label', inbound ? '오는 편 조회 결과' : '가는 편 조회 결과');
+      const header = node('div','leg-top'), detail = node('div');
+      detail.append(node('span','direction',inbound ? '오는 편' : '가는 편'));
+      const route = node('div','route-line'); route.append(node('h3',null,leg.origin),node('span','arrow','→'),node('h3',null,leg.destination)); detail.append(route);
+      detail.append(node('div','route-details',monthName(leg.month) + ' · ' + cabinNames[currentParams.cabin]));
+      const all = activeDates(leg), filtered = inbound ? all.filter(d => inboundAllowed(d.date)) : all;
+      const count = node('div','result-count'); count.append(node('strong',null,leg.calendar && !(inbound && !outboundDate) ? String(filtered.length) : '—'),node('span',null,'일'),node('div','count-label',inbound && !outboundDate ? '가는 날 선택 후 확인' : '조회된 날짜'));
+      header.append(detail,count); section.append(header);
+      if(!leg.calendar) section.append(placeholder('아직 조회한 결과가 없어요.','위의 조회 버튼을 눌러 선택한 노선과 월의 좌석을 확인해 주세요.'));
+      else if(inbound && !outboundDate) section.append(placeholder('가는 날을 먼저 골라 주세요.', '이달에는 마일리지 좌석이 있는 날짜가 ' + all.length + '일 있어요. 가는 날을 고르면 설정한 여행 기간에 맞춰 오는 날을 보여드려요.'));
+      else if(filtered.length === 0) section.append(placeholder(inbound && all.length ? '설정한 여행 기간에 맞는 오는 날이 없어요.' : '선택한 조건의 마일리지 좌석을 찾지 못했어요.',inbound && all.length ? '가는 날이나 여행 기간을 바꿔서 확인해 주세요.' : '조회한 현황에는 ' + cabinNames[currentParams.cabin] + ' 마일리지 좌석이 없어요. 다른 달이나 좌석 등급을 선택해 보세요.'));
+      else {
+        if(inbound) section.append(node('p','selection-note',prettyDate(outboundDate) + ' 출발 · 두 편의 출발일 간격이 ' + stayDays() + '일 이상인 날짜만 보여드려요.'));
+        const grid = node('div','date-grid');
+        for(const item of filtered) {
+          const selected = (inbound ? inboundDate : outboundDate) === item.date;
+          const card = node('button','date-card' + (selected ? ' selected' : '')); card.type = 'button'; card.dataset.date = item.date; card.dataset.direction = leg.direction; card.setAttribute('aria-pressed',String(selected)); card.setAttribute('aria-label',item.date + ' ' + cabinNames[currentParams.cabin] + ' 마일리지 좌석, ' + (inbound ? '오는 날' : '가는 날') + ' 선택');
+          const date = dateObject(item.date), day = new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',weekday:'short'}).format(date);
+          card.append(node('span','date-top',Number(item.date.slice(5,7)) + '월 · ' + day),node('span','date-number',String(Number(item.date.slice(8,10)))),node('span','date-badge','마일리지 좌석'));
+          if(selected) { const mark = node('span','selected-mark','✓'); mark.setAttribute('aria-hidden','true'); card.append(mark); }
+          card.addEventListener('click',() => { if(busy || handoffBusy) return; if(inbound) inboundDate = item.date; else { outboundDate = item.date; if(inboundDate && !inboundAllowed(inboundDate)) inboundDate = null; } resetHandoffStatus(); renderResults(); Array.from(document.querySelectorAll('.date-card')).find(button => button.dataset.date === item.date && button.dataset.direction === leg.direction)?.focus({preventScroll:true}); }); grid.append(card);
+        }
+        section.append(grid);
+      }
+      if(leg.calendar) {
+        const bottom = node('div','leg-bottom'), times = node('div','timestamps');
+        times.append(node('span',null,'대한항공 정보 기준: ' + timestamp(leg.calendar.sourceUpdatedAt)),node('span',null,'조회한 시각: ' + timestamp(leg.calendar.collectedAt) + ' · 한국 시간'));
+        bottom.append(times,node('span',leg.stale ? 'stale' : 'cache-mark',leg.stale ? '다시 조회해 주세요' : '저장된 조회 결과')); section.append(bottom);
+      }
+      return section;
+    }
+    function renderResults() {
+      const container = $('results'); container.replaceChildren();
+      if(!currentResult || !currentParams) { const p = node('div','panel'); p.append(placeholder('조회할 노선과 월을 골라 주세요.','공항 코드와 조회할 월을 입력한 뒤 마일리지 좌석 조회를 눌러 주세요.')); container.append(p); $('journey').hidden = true; syncControls(); return; }
+      const legs = Array.isArray(currentResult.legs) ? currentResult.legs : [];
+      for(const leg of legs) container.append(renderLeg(leg));
+      if(!legs.length) { const p = node('div','panel'); p.append(placeholder('아직 조회한 결과가 없어요.','조회 버튼을 눌러 마일리지 좌석을 확인해 주세요.')); container.append(p); }
+      const round = currentParams.tripType === 'ROUND_TRIP';
+      $('results-description').textContent = round ? '가는 날과 오는 날을 차례로 골라 여행 일정을 확인해 보세요.' : (airportNames[currentParams.origin] || currentParams.origin) + ' → ' + (airportNames[currentParams.destination] || currentParams.destination) + ' · ' + cabinNames[currentParams.cabin] + ' · 좌석 승급 제외';
+      $('journey').hidden = !legs.some(leg => leg.calendar);
+      $('journey-text').textContent = outboundDate ? currentParams.origin + ' → ' + currentParams.destination + ' · ' + prettyDate(outboundDate) + (round ? (inboundDate ? ' 출발 / ' + prettyDate(inboundDate) + ' 오는 편 출발' : ' 출발 · 오는 날을 골라 주세요') : ' 출발') : '아직 선택한 날짜가 없어요.';
+      syncControls();
+    }
+    async function readCache() {
+      if(busy || handoffBusy || !config) return;
+      const p = params(), version = ++cacheVersion;
+      if(!valid(p)) { currentResult = null; currentParams = null; resetSelections(); renderResults(); setStatus(p.origin === p.destination ? '출발 공항과 도착 공항을 다르게 선택해 주세요.' : '공항 코드와 조회할 월을 입력해 주세요.'); return; }
+      setStatus('선택한 조건으로 이전에 조회한 결과를 찾고 있어요.');
+      try {
+        const result = await api('/api/cache?' + new URLSearchParams(p));
+        if(version !== cacheVersion || busy || handoffBusy) return;
+        showResult(result,p);
+        const found = (result.legs || []).some(leg => leg.calendar);
+        const stale = (result.legs || []).some(leg => leg.stale);
+        setStatus(found ? (result.state === 'missing' ? '일부 구간의 결과만 있어요. 조회 버튼을 눌러 나머지 구간도 확인해 주세요.' : stale ? '조회한 지 시간이 지난 결과예요. 조회 버튼을 눌러 다시 확인해 주세요.' : '이전에 조회한 결과예요. 아래 기준 시각을 확인해 주세요.') : '아직 조회한 결과가 없어요. 조회 버튼을 눌러 마일리지 좌석을 확인해 주세요.');
+      } catch(error) { if(version === cacheVersion) setStatus(error.message,'error'); }
+    }
+    function scheduleCache() { if(busy || handoffBusy) return; clearTimeout(cacheTimer); ++cacheVersion; cacheTimer = setTimeout(readCache,250); }
+    async function poll(jobId, p) {
+      for(;;) {
+        const job = await api('/api/jobs/' + encodeURIComponent(jobId));
+        if(job.status === 'complete') { if(!job.result) throw new Error('조회 결과를 받지 못했어요. 이전 결과를 계속 보여드릴게요.'); showResult(job.result,p); setStatus('좌석 현황을 불러왔어요. 아래 기준 시각을 함께 확인해 주세요.','success'); return; }
+        if(job.status === 'failed') { if(job.result) showResult(job.result,p); throw new Error(job.error?.message || job.message || '조회를 마치지 못했어요.'); }
+        if(!['queued','running'].includes(job.status)) throw new Error('조회 상태를 확인할 수 없어요.');
+        setStatus(job.message || '대한항공의 좌석 현황을 확인하고 있어요. 조회를 위해 브라우저가 열릴 수 있어요.','busy');
+        await new Promise(resolve => setTimeout(resolve,1200));
+      }
+    }
+    async function pollHandoff(jobId) {
+      for(;;) {
+        const job = await api('/api/jobs/' + encodeURIComponent(jobId));
+        if(job.status === 'complete') {
+          if(job.result?.kind !== 'airline-handoff') throw new Error('대한항공 화면을 열었는지 확인하지 못했어요. 열린 Chrome 창을 확인해 주세요.');
+          setHandoffStatus(job.result.message || (job.result.stage === 'date_selected' ? '선택한 날짜로 대한항공을 열었어요. Chrome 창에서 확인해 주세요.' : '대한항공에 조회 조건을 입력했어요. Chrome 창에서 확인해 주세요.'), 'success');
+          return;
+        }
+        if(job.status === 'failed') throw new Error(job.error?.message || job.message || '대한항공에 조건을 입력하지 못했어요. 열린 Chrome 창을 확인해 주세요.');
+        if(!['queued','running'].includes(job.status)) throw new Error('대한항공 화면을 여는 상태를 확인하지 못했어요.');
+        setHandoffStatus(job.message || '새 Chrome 창에 선택한 조건을 입력하고 있어요.', 'busy');
+        await new Promise(resolve => setTimeout(resolve,1200));
+      }
+    }
+    $('open-airline-button').addEventListener('click',async () => {
+      if(busy || handoffBusy || !handoffReady()) return;
+      const selection = {...currentParams, outboundDate, returnDate:currentParams.tripType === 'ROUND_TRIP' ? inboundDate : null};
+      clearTimeout(cacheTimer); ++cacheVersion;
+      handoffBusy = true; syncControls(); setHandoffStatus('새 Chrome 창을 열고 있어요. 잠시만 기다려 주세요.', 'busy');
+      try {
+        const job = await api('/api/open-airline',{method:'POST',body:JSON.stringify(selection)});
+        if(!job.jobId) throw new Error('대한항공 화면을 열지 못했어요.');
+        await pollHandoff(job.jobId);
+      } catch(error) { setHandoffStatus(error.message, 'error'); }
+      finally { handoffBusy = false; syncControls(); }
+    });
+    form.addEventListener('submit',async event => {
+      event.preventDefault(); if(busy || handoffBusy || !config || !form.reportValidity()) return;
+      const p = params(); if(!valid(p)) { setStatus('출발 공항과 도착 공항을 다르게 입력하고, 조회할 월을 선택해 주세요.','error'); return; }
+      clearTimeout(cacheTimer); ++cacheVersion; setBusy(true); setStatus('조회를 시작하고 있어요. 잠시만 기다려 주세요.','busy');
+      try { const job = await api('/api/search',{method:'POST',body:JSON.stringify(p)}); if(!job.jobId) throw new Error('조회를 시작하지 못했어요.'); await poll(job.jobId,p); }
+      catch(error) { setStatus(error.message + (currentResult?.legs?.some(leg => leg.calendar) ? ' 조회를 마친 구간의 결과는 아래에서 볼 수 있어요.' : ''),'error'); }
+      finally { setBusy(false); }
+    });
+    $('stay-days').addEventListener('input',() => { if(inboundDate && !inboundAllowed(inboundDate)) inboundDate = null; resetHandoffStatus(); renderResults(); });
+    form.addEventListener('change',event => { if(event.target.id === 'stay-days') { if(inboundDate && !inboundAllowed(inboundDate)) inboundDate = null; resetHandoffStatus(); renderResults(); return; } updateTripControls(); scheduleCache(); });
+    for(const input of [fields.origin,fields.destination]) { input.addEventListener('input',scheduleCache); input.addEventListener('blur',() => { input.value = input.value.trim().toUpperCase(); }); }
+    $('swap').addEventListener('click',() => { [fields.origin.value,fields.destination.value] = [fields.destination.value,fields.origin.value]; scheduleCache(); });
+    async function init() {
+      try {
+        config = await api('/api/config');
+        for(const [key,input] of Object.entries(fields)) if(config.defaults?.[key]) input.value = config.defaults[key];
+        if(config.defaults?.tripType) { const radio = Array.from(form.elements.tripType).find(input => input.value === config.defaults.tripType); if(radio) radio.checked = true; }
+        for(const input of [fields.month,fields.returnMonth]) { if(config.minMonth) input.min = config.minMonth; if(config.maxMonth) input.max = config.maxMonth; }
+        if(!fields.returnMonth.value) fields.returnMonth.value = fields.month.value;
+        if(config.sourceUrl) { try { const url = new URL(config.sourceUrl); if(url.protocol === 'https:' && url.hostname === 'www.koreanair.com') sourceUrl = url.href; } catch {} }
+        for(const link of document.querySelectorAll('.official-link')) link.href = sourceUrl;
+        updateTripControls(); setBusy(false); await readCache();
+      } catch(error) { config = null; setBusy(false); setStatus(error.message,'error'); $('results').replaceChildren(placeholder('조회 프로그램이 실행 중인지 확인해 주세요.','프로그램 실행 창을 열어 두고 이 페이지를 새로고침해 주세요.')); }
+    }
+    init();
+  </script>
+</body>
+</html>
