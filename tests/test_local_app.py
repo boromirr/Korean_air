@@ -44,6 +44,19 @@ def handoff_result(selection, stage="date_selected"):
             "message": app.HANDOFF_MESSAGES[stage]}
 
 
+def synthetic_routes():
+    """Small static test catalogue; not a record of current airline operations."""
+    return {
+        "sourceUrl": app.SOURCE_URL, "retrievedAt": NOW.isoformat(),
+        "airports": [
+            {"code": "ICN", "name": "서울/인천", "region": "대한민국"},
+            {"code": "SIN", "name": "싱가포르", "region": "동남아시아"},
+            {"code": "JFK", "name": "뉴욕", "region": "미주"},
+        ],
+        "destinations": {"ICN": ["SIN", "JFK"], "SIN": ["ICN"]},
+    }
+
+
 def synthetic_calendar(leg, collected_at=NOW):
     """Synthetic complete month, deliberately confined to temporary test roots."""
     year, month = map(int, leg["month"].split("-"))
@@ -162,6 +175,92 @@ class HandoffValidationTests(unittest.TestCase):
                 with self.assertRaises(app.AppError) as raised:
                     app.validate_handoff_request(raw, TODAY)
                 self.assertEqual(raised.exception.code, code)
+
+
+class RouteCatalogTests(unittest.TestCase):
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temporary.cleanup)
+        self.root = Path(self.temporary.name)
+        self.path = self.root / "config" / "award-routes.json"
+        self.path.parent.mkdir()
+
+    def write(self, value):
+        self.path.write_text(json.dumps(value, ensure_ascii=False), encoding="utf-8")
+
+    def test_reads_static_file_and_preserves_directional_lists_without_fetching(self):
+        value = synthetic_routes()
+        self.write(value)
+        with mock.patch.object(app.subprocess, "Popen", side_effect=AssertionError("No browser launch")):
+            self.assertEqual(app.read_route_catalog(self.root), value)
+        self.assertNotIn("JFK", app.read_route_catalog(self.root)["destinations"])
+        self.assertEqual(json.loads(self.path.read_text(encoding="utf-8")), value)
+
+    def test_returns_only_documented_fields_and_trims_display_labels(self):
+        value = synthetic_routes()
+        value["internalNote"] = "not public API data"
+        value["airports"][0].update(name="  서울/인천  ", extra="not returned")
+        self.write(value)
+        self.assertEqual(app.read_route_catalog(self.root), synthetic_routes())
+
+    def test_empty_connections_are_valid_unknown_routes_without_inventing_pairs(self):
+        value = synthetic_routes()
+        value["destinations"] = {}
+        self.write(value)
+        result = app.read_route_catalog(self.root)
+        self.assertEqual(result, value)
+        self.assertEqual(result["destinations"], {})
+        self.assertEqual(len(result["airports"]), 3)
+
+    def test_missing_or_unreadable_file_is_a_safe_unavailable_error(self):
+        for failure in (FileNotFoundError("private path"), PermissionError("private path")):
+            with self.subTest(failure=type(failure).__name__):
+                with mock.patch.object(Path, "open", side_effect=failure):
+                    with self.assertRaises(app.AppError) as raised:
+                        app.read_route_catalog(self.root)
+                self.assertEqual(raised.exception.code, "ROUTES_UNAVAILABLE")
+                self.assertEqual(raised.exception.status, 503)
+                self.assertNotIn("private", raised.exception.message)
+
+    def test_rejects_invalid_types_codes_duplicates_and_unknown_connections(self):
+        mutations = [
+            lambda value: value.update(sourceUrl="javascript:unsafe"),
+            lambda value: value.update(sourceUrl="https://user:password@example.com/"),
+            lambda value: value.update(retrievedAt="2026-09-07T03:00:00"),
+            lambda value: value.update(airports=[]),
+            lambda value: value["airports"].append(copy.deepcopy(value["airports"][0])),
+            lambda value: value["airports"][0].update(code="icn"),
+            lambda value: value["airports"][0].update(name=""),
+            lambda value: value["airports"][0].update(region=42),
+            lambda value: value["airports"].append("not an airport"),
+            lambda value: value.update(destinations=[]),
+            lambda value: value["destinations"].update(XXX=["ICN"]),
+            lambda value: value["destinations"].update(ICN=["XXX"]),
+            lambda value: value["destinations"].update(ICN="SIN"),
+            lambda value: value["destinations"].update(ICN=[True]),
+            lambda value: value["destinations"].update(ICN=["SIN", "SIN"]),
+            lambda value: value["destinations"].update(ICN=["ICN"]),
+        ]
+        for index, mutate in enumerate(mutations):
+            with self.subTest(corruption=index):
+                value = synthetic_routes()
+                mutate(value)
+                self.write(value)
+                with self.assertRaises(app.AppError) as raised:
+                    app.read_route_catalog(self.root)
+                self.assertEqual(raised.exception.code, "ROUTES_INVALID")
+                self.assertEqual(raised.exception.status, 503)
+
+    def test_rejects_malformed_encoding_oversize_and_duplicate_json_keys(self):
+        value = json.dumps(synthetic_routes())
+        duplicate = value.replace('"ICN": ["SIN", "JFK"]', '"ICN": ["SIN"], "ICN": ["JFK"]')
+        for content in (b"not JSON", b"\xff\xfe", b"[1,2,3]", duplicate.encode("utf-8"),
+                        b" " * (app.ROUTE_CATALOG_LIMIT + 1)):
+            with self.subTest(size=len(content)):
+                self.path.write_bytes(content)
+                with self.assertRaises(app.AppError) as raised:
+                    app.read_route_catalog(self.root)
+                self.assertEqual(raised.exception.code, "ROUTES_INVALID")
 
 
 class TemporaryStoreTests(unittest.TestCase):
@@ -946,6 +1045,46 @@ class HttpBoundaryTests(unittest.TestCase):
                 self.assertEqual(headers["Cache-Control"], "no-store")
                 self.assertEqual(headers["X-Frame-Options"], "DENY")
         self.assertEqual(body["state"], "missing")
+        self.collector.assert_not_called()
+
+    def test_routes_get_returns_validated_local_catalogue_with_existing_response_protections(self):
+        path = Path(self.temporary.name) / "config" / "award-routes.json"
+        path.parent.mkdir(exist_ok=True)
+        self.addCleanup(lambda: path.unlink(missing_ok=True))
+        value = synthetic_routes()
+        path.write_text(json.dumps(value), encoding="utf-8")
+        # URL parameters cannot redirect this reader to a different file or site.
+        status, headers, body = self.request("GET", "/api/routes?file=../../local_app.py")
+        self.assertEqual(status, 200)
+        self.assertEqual(body, value)
+        self.assertEqual(headers["Cache-Control"], "no-store")
+        self.assertEqual(headers["X-Frame-Options"], "DENY")
+        self.collector.assert_not_called()
+        self.assertIsNone(self.service.active)
+
+    def test_missing_or_corrupt_catalogue_returns_json_and_other_gets_still_work(self):
+        path = Path(self.temporary.name) / "config" / "award-routes.json"
+        path.parent.mkdir(exist_ok=True)
+        self.addCleanup(lambda: path.unlink(missing_ok=True))
+        path.unlink(missing_ok=True)
+        for content, expected in ((None, "ROUTES_UNAVAILABLE"), ("invalid JSON", "ROUTES_INVALID")):
+            with self.subTest(expected=expected):
+                if content is not None:
+                    path.write_text(content, encoding="utf-8")
+                status, headers, body = self.request("GET", "/api/routes")
+                self.assertEqual(status, 503)
+                self.assertEqual(headers["Content-Type"], "application/json; charset=utf-8")
+                self.assertEqual(body["error"]["code"], expected)
+                self.assertEqual(self.request("GET", "/api/health")[0], 200)
+                self.assertEqual(self.request("GET", "/api/cache?" + urlencode(PARAMS))[0], 200)
+        self.collector.assert_not_called()
+
+    def test_route_catalogue_keeps_local_host_and_cross_site_protection(self):
+        for headers in ({"Host": "example.com:%d" % self.port}, {"Sec-Fetch-Site": "cross-site"}):
+            with self.subTest(headers=headers):
+                status, _, body = self.request("GET", "/api/routes", headers=headers)
+                self.assertEqual(status, 403)
+                self.assertEqual(body["error"]["code"], "LOCAL_ONLY")
         self.collector.assert_not_called()
 
     def test_external_host_and_cross_site_get_are_rejected(self):

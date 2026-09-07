@@ -34,6 +34,7 @@ CABIN_CHOICES = ("all",) + CABINS
 RESTRICTIONS = {"ACCESS_RESTRICTED", "USER_ACTION_REQUIRED", "LOGIN_REQUIRED"}
 HANDOFF_TIMEOUT_SECONDS = 150
 HANDOFF_STATUS_LIMIT = 8192
+ROUTE_CATALOG_LIMIT = 2 * 1024 * 1024
 HANDOFF_MESSAGES = {
     "date_selected": "선택한 날짜로 대한항공을 열었어요. Chrome 창에서 확인해 주세요.",
     "form_filled": "대한항공에 왕복 노선과 조회할 달을 입력했어요. 날짜와 좌석 등급은 Chrome 창에서 선택해 주세요.",
@@ -57,6 +58,83 @@ def timestamp(value):
     if parsed.tzinfo is None:
         raise ValueError("timezone required")
     return parsed
+
+
+def validate_route_catalog(value):
+    """Validate the public static catalogue without inferring extra routes."""
+    if not isinstance(value, dict):
+        raise ValueError("route catalogue must be an object")
+    source_url = value.get("sourceUrl")
+    if not isinstance(source_url, str) or not source_url or len(source_url) > 2048:
+        raise ValueError("source URL required")
+    source = urlparse(source_url)
+    if source.scheme != "https" or not source.hostname or source.username or source.password:
+        raise ValueError("invalid public source URL")
+    retrieved_at = value.get("retrievedAt")
+    timestamp(retrieved_at)
+    airports = value.get("airports")
+    if not isinstance(airports, list) or not airports:
+        raise ValueError("airport list required")
+    codes, normalized_airports = set(), []
+    for airport in airports:
+        if not isinstance(airport, dict):
+            raise ValueError("invalid airport")
+        code = airport.get("code")
+        if not isinstance(code, str) or not re.fullmatch(r"[A-Z]{3}", code) or code in codes:
+            raise ValueError("invalid or duplicate airport code")
+        entry = {"code": code}
+        for key in ("name", "region"):
+            text = airport.get(key)
+            if (not isinstance(text, str) or not text.strip() or len(text) > 200
+                    or any(ord(character) < 32 for character in text)):
+                raise ValueError("invalid airport label")
+            entry[key] = text.strip()
+        codes.add(code)
+        normalized_airports.append(entry)
+    destinations = value.get("destinations")
+    if not isinstance(destinations, dict):
+        raise ValueError("destination mapping required")
+    # An empty mapping means route connections have not been verified. It must
+    # not turn a public airport list into an invented all-to-all route network.
+    normalized_destinations = {}
+    for origin, arrivals in destinations.items():
+        if not isinstance(origin, str) or origin not in codes or not isinstance(arrivals, list):
+            raise ValueError("unknown origin or invalid destinations")
+        seen = set()
+        for arrival in arrivals:
+            if not isinstance(arrival, str) or arrival not in codes or arrival == origin or arrival in seen:
+                raise ValueError("unknown, duplicate, or identical destination")
+            seen.add(arrival)
+        normalized_destinations[origin] = list(arrivals)
+    return {"sourceUrl": source_url, "retrievedAt": retrieved_at,
+            "airports": normalized_airports, "destinations": normalized_destinations}
+
+
+def route_object_pairs(pairs):
+    """Reject duplicate JSON keys rather than silently replacing a route list."""
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError("duplicate route catalogue key")
+        result[key] = value
+    return result
+
+
+def read_route_catalog(root=ROOT):
+    """GET reads this fixed local file only; it never refreshes from the airline."""
+    path = Path(root) / "config" / "award-routes.json"
+    try:
+        with path.open("rb") as source:
+            content = source.read(ROUTE_CATALOG_LIMIT + 1)
+    except OSError:
+        raise AppError("ROUTES_UNAVAILABLE", "공항 목록을 불러오지 못했어요. 공항 코드를 직접 입력해 주세요.", 503)
+    try:
+        if len(content) > ROUTE_CATALOG_LIMIT:
+            raise ValueError("route catalogue too large")
+        value = json.loads(content.decode("utf-8"), object_pairs_hook=route_object_pairs)
+        return validate_route_catalog(value)
+    except (ValueError, TypeError, OverflowError, RecursionError):
+        raise AppError("ROUTES_INVALID", "저장된 공항 목록을 확인할 수 없어요. 공항 코드를 직접 입력해 주세요.", 503)
 
 
 def month_bounds(today=None):
@@ -601,6 +679,8 @@ class Handler(BaseHTTPRequestHandler):
                 self.respond({"app": "korean-air-local-award-viewer", "status": "ok"})
             elif target.path == "/api/config":
                 self.respond(app_config())
+            elif target.path == "/api/routes":
+                self.respond(read_route_catalog(self.server.service.store.root))
             elif target.path == "/api/cache":
                 query = parse_qs(target.query)
                 params = validate_request({key: values[-1] for key, values in query.items()})
