@@ -3,7 +3,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { CollectionError, SOURCE_URL, validateFutureMonth, validateRoute } from './collector.js';
 
-export type HandoffCabin = 'economy' | 'premium' | 'prestige';
+export type HandoffCabin = 'all' | 'economy' | 'premium' | 'prestige';
 export interface HandoffSelection {
   origin: string;
   destination: string;
@@ -26,8 +26,9 @@ const ALL_FILTERS = [
   '일반석 보너스', '프리미엄석 보너스', '프리미엄석 좌석승급',
   '프레스티지석 보너스', '프레스티지석 좌석승급', '일등석 보너스/좌석승급',
 ] as const;
-const AWARD_LABELS: Record<HandoffCabin, string> = {
-  economy: '일반석 보너스', premium: '프리미엄석 보너스', prestige: '프레스티지석 보너스',
+const AWARD_LABELS: Record<HandoffCabin, readonly string[]> = {
+  all: ['일반석 보너스', '프리미엄석 보너스', '프레스티지석 보너스'],
+  economy: ['일반석 보너스'], premium: ['프리미엄석 보너스'], prestige: ['프레스티지석 보너스'],
 };
 const RESULT_DIALOG = '[role="dialog"][aria-labelledby="modals-travelCalendar-title"]';
 const SECURITY_NOTICE = /access denied|접근이 차단|접속이 차단|비정상적인 접근|보안 문자|자동입력 방지|로봇이 아님|verify you are human|checking your browser|captcha/i;
@@ -56,7 +57,7 @@ export function normalizeHandoffSelection(input: unknown, now = new Date()): Han
   if (typeof data.month !== 'string') invalid('조회할 달을 선택하세요.');
   validateFutureMonth(data.month, now);
   if (data.tripType !== 'ONE_WAY' && data.tripType !== 'ROUND_TRIP') invalid('편도 또는 왕복을 선택하세요.');
-  if (data.cabin !== 'economy' && data.cabin !== 'premium' && data.cabin !== 'prestige') invalid('좌석 등급을 다시 선택하세요.');
+  if (data.cabin !== 'all' && data.cabin !== 'economy' && data.cabin !== 'premium' && data.cabin !== 'prestige') invalid('좌석 등급을 다시 선택하세요.');
   const selection: HandoffSelection = {
     origin, destination, month: data.month, tripType: data.tripType, cabin: data.cabin,
     outboundDate: validDate(data.outboundDate, data.month, '가는 날'),
@@ -83,10 +84,18 @@ export function handoffSelectionPlan(selection: HandoffSelection) {
     tripSuffix: selection.tripType === 'ONE_WAY' ? 'OW' : 'RT',
     // Two deliberate month selections are required for a same-month round trip.
     months: [selection.month, ...(selection.returnMonth ? [selection.returnMonth] : [])],
-    awardLabel: AWARD_LABELS[selection.cabin],
+    awardLabels: [...AWARD_LABELS[selection.cabin]],
     outboundDay: Number(selection.outboundDate.slice(-2)),
     returnDay: selection.returnDate ? Number(selection.returnDate.slice(-2)) : null,
   };
+}
+
+export function handoffFilterPlan(cabin: HandoffCabin) {
+  const desired = new Set(AWARD_LABELS[cabin]);
+  // Enable every requested award type before disabling other types. "All" still
+  // excludes upgrades and the first-class filter whose award meaning is mixed.
+  return [...desired, ...ALL_FILTERS.filter((name) => !desired.has(name))]
+    .map((name) => ({ name, checked: desired.has(name) }));
 }
 
 export function restrictedFirstPartyResponse(url: string, status: number): boolean {
@@ -205,20 +214,19 @@ async function filterAwards(page: Page, panel: Locator, selection: HandoffSelect
   if (await guard.step(() => filter.getByRole('checkbox').count()) !== ALL_FILTERS.length) {
     throw new CollectionError('STRUCTURE_CHANGED', '대한항공의 좌석 등급 필터를 확인하지 못했습니다.');
   }
-  const desired = AWARD_LABELS[selection.cabin];
+  const desired = new Set(AWARD_LABELS[selection.cabin]);
   guard.stage = `${direction}_filter_select`;
-  // Preserve one award type; upgrades are never treated as mileage award seats.
-  for (const name of [desired, ...ALL_FILTERS.filter((name) => name !== desired)]) {
+  for (const { name, checked: shouldBeChecked } of handoffFilterPlan(selection.cabin)) {
     const checkbox = filter.getByRole('checkbox', { name, exact: true });
     const checked = await guard.step(() => checkbox.isChecked());
-    if (checked !== (name === desired)) {
+    if (checked !== shouldBeChecked) {
       const id = await guard.step(() => checkbox.getAttribute('id'));
       if (!id || !/^[A-Za-z][\w:-]*$/u.test(id)) {
         throw new CollectionError('STRUCTURE_CHANGED', '대한항공의 좌석 등급 선택 항목을 확인하지 못했습니다.');
       }
       // The visual labels cover the native checkboxes in the observed UI.
       await guard.step(() => filter.locator(`label[for="${id}"]`).click());
-      if (await guard.step(() => checkbox.isChecked()) !== (name === desired)) {
+      if (await guard.step(() => checkbox.isChecked()) !== shouldBeChecked) {
         throw new CollectionError('STRUCTURE_CHANGED', '대한항공 화면에 좌석 등급을 적용하지 못했습니다.');
       }
     }
@@ -229,7 +237,7 @@ async function filterAwards(page: Page, panel: Locator, selection: HandoffSelect
   if (await guard.step(() => apply.isVisible())) await guard.step(() => apply.click());
   else await guard.step(() => filter.getByRole('button', { name: '닫기', exact: true }).click());
   const labels = await guard.step(() => panel.locator('.bonus-calendar__icons li').allTextContents());
-  if (labels.some((text) => text.trim() !== desired)) {
+  if (labels.some((text) => !desired.has(text.trim()))) {
     throw new CollectionError('FILTER_FAILED', '대한항공 달력에 선택한 좌석 등급을 적용하지 못했습니다.');
   }
 }

@@ -27,11 +27,11 @@
             <button class="swap" type="button" id="swap" aria-label="출발 공항과 도착 공항 바꾸기">⇄</button>
             <label class="field"><span class="field-label">도착 공항</span><input id="destination" name="destination" value="SIN" list="airports" maxlength="3" pattern="[A-Za-z]{3}" autocomplete="off" spellcheck="false" required aria-describedby="airport-hint"></label>
             <label class="field month-field"><span class="field-label" id="month-label">가는 달</span><input id="month" name="month" type="month" required></label>
-            <label class="field cabin-field"><span class="field-label">좌석 등급</span><select name="cabin" id="cabin"><option value="economy">일반석</option><option value="premium">프리미엄석</option><option value="prestige" selected>비즈니스(프레스티지석)</option><option value="first" disabled>일등석(아직 조회할 수 없어요)</option></select></label>
+            <label class="field cabin-field"><span class="field-label">좌석 등급</span><select name="cabin" id="cabin" aria-describedby="cabin-hint"><option value="all">전체</option><option value="economy">일반석</option><option value="premium">프리미엄석</option><option value="prestige" selected>비즈니스(프레스티지석)</option><option value="first" disabled>일등석(아직 조회할 수 없어요)</option></select></label>
             <button class="primary" id="search-button" type="submit" disabled><svg id="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg><span id="button-text">마일리지 좌석 조회</span></button>
           </div>
           <div class="return-fields" id="return-fields" hidden><label class="field"><span class="field-label">오는 달</span><input type="month" name="returnMonth" id="return-month"></label><label class="field"><span class="field-label">최소 여행 기간(일)</span><input type="number" id="stay-days" name="minStayDays" value="1" min="0" max="365" step="1"></label><p>가는 날에서 입력한 일수 이상 지난 오는 날을 보여드려요.<br>두 항공편의 출발일을 기준으로 계산해요.</p></div>
-          <div class="form-bottom"><p id="airport-hint">공항 코드를 영문 세 글자로 입력해 주세요. 예: 인천 ICN · 싱가포르 SIN</p><p>마일리지로 예약하는 좌석만 보여드려요. 좌석 승급은 제외했어요.</p></div>
+          <div class="form-bottom"><p id="airport-hint">공항 코드를 영문 세 글자로 입력해 주세요. 예: 인천 ICN · 싱가포르 SIN</p><p id="cabin-hint">마일리지로 예약하는 좌석만 보여드려요. 좌석 승급은 제외했어요.</p></div>
         </form>
         <div class="status" id="status" role="status" aria-live="polite"><span class="status-dot" aria-hidden="true"></span><span id="status-text">조회 화면을 준비하고 있어요.</span></div>
       </section>
@@ -49,7 +49,7 @@
     const $ = (id) => document.getElementById(id);
     const form = $('search-form');
     const fields = {origin:$('origin'), destination:$('destination'), month:$('month'), returnMonth:$('return-month'), cabin:$('cabin')};
-    const cabinNames = {economy:'일반석', premium:'프리미엄석', prestige:'프레스티지석'};
+    const cabinNames = {all:'전체 등급', economy:'일반석', premium:'프리미엄석', prestige:'프레스티지석'};
     const cabinKeys = {economy:'economyAward', premium:'premiumAward', prestige:'prestigeAward'};
     const airportNames = Object.fromEntries(Array.from($('airports').options, option => [option.value, option.label]));
     let config, currentResult = null, currentParams = null, resultFailed = false, outboundDate = null, inboundDate = null, busy = false, handoffBusy = false, cacheVersion = 0, cacheTimer;
@@ -65,7 +65,8 @@
     function timestamp(value) { if(!value) return '제공된 정보가 없어요'; const d = new Date(value); return Number.isNaN(d.getTime()) ? '확인할 수 없어요' : new Intl.DateTimeFormat('ko-KR', {timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).format(d); }
     function stayDays() { return Math.max(0, Math.min(365, Math.trunc(Number($('stay-days').value) || 0))); }
     function inboundAllowed(date) { if(!outboundDate) return false; const d = dateObject(date), start = dateObject(outboundDate); return Boolean(d && start && (d.getTime() - start.getTime()) / 86400000 >= stayDays()); }
-    function activeDates(leg) { const key = cabinKeys[currentParams?.cabin]; return [...new Map((leg.calendar?.dates || []).filter(d => d[key] === true && dateObject(d.date)).map(d => [d.date,d])).values()].sort((a,b) => a.date.localeCompare(b.date)); }
+    function awardCabins(day, cabin = currentParams?.cabin) { return (cabin === 'all' ? Object.keys(cabinKeys) : [cabin]).filter(name => cabinKeys[name] && day[cabinKeys[name]] === true); }
+    function activeDates(leg) { return [...new Map((leg.calendar?.dates || []).filter(d => awardCabins(d).length > 0 && dateObject(d.date)).map(d => [d.date,d])).values()].sort((a,b) => a.date.localeCompare(b.date)); }
     function handoffReady() { return Boolean(currentParams && valid(currentParams) && outboundDate && (currentParams.tripType !== 'ROUND_TRIP' || inboundDate)); }
     function syncControls() {
       const working = busy || handoffBusy;
@@ -85,7 +86,7 @@
       else if(currentParams?.tripType === 'ROUND_TRIP' && !inboundDate) setHandoffStatus(!inbound?.calendar ? '오는 편의 조회를 완료한 뒤 날짜를 골라 주세요.' : !activeDates(inbound).length ? '오는 편에 보너스 좌석 표시가 없어요. 조회 조건을 바꿔 주세요.' : activeDates(inbound).some(day => inboundAllowed(day.date)) ? '오는 날도 골라 주세요.' : '여행 기간에 맞는 오는 날이 없어요. 가는 날이나 여행 기간을 바꿔 주세요.');
       else setHandoffStatus('');
     }
-    function updateTripControls() { const round = tripType() === 'ROUND_TRIP'; $('return-fields').hidden = !round; fields.returnMonth.required = round; $('month-label').textContent = '가는 달'; }
+    function updateTripControls() { const round = tripType() === 'ROUND_TRIP'; $('return-fields').hidden = !round; fields.returnMonth.required = round; $('month-label').textContent = '가는 달'; $('cabin-hint').textContent = fields.cabin.value === 'all' ? '전체는 일반석·프리미엄석·비즈니스 보너스 좌석을 함께 보여드려요. 일등석·좌석 승급은 제외해요.' : '마일리지로 예약하는 좌석만 보여드려요. 좌석 승급은 제외했어요.'; }
     async function api(url, options) { let response; try { response = await fetch(url, {...options,headers:{'Content-Type':'application/json',...(options?.headers || {})}}); } catch { throw new Error('조회 프로그램에 연결할 수 없어요. 프로그램 실행 창이 열려 있는지 확인해 주세요.'); } let data; try { data = await response.json(); } catch { throw new Error('조회 내용을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.'); } if(!response.ok) throw new Error(data.error?.message || data.message || '요청을 처리하지 못했어요.'); return data; }
     function placeholder(title, message) { const empty = node('div','empty'); empty.append(node('div','empty-icon','▦'),node('strong',null,title),node('p',null,message)); return empty; }
     function resetSelections() { outboundDate = null; inboundDate = null; resetHandoffStatus(); }
@@ -94,7 +95,7 @@
       const legs = (result.legs || []).filter(leg => leg.calendar);
       const cached = legs.filter(leg => leg.cached).length;
       const source = cached === legs.length ? '최근 12시간 이내에 가져온 결과를 다시 보여드려요.' : cached ? '구간별 현황을 확인했어요. 일부 구간은 저장된 결과를 사용했어요.' : '대한항공 공개 현황을 새로 가져왔어요.';
-      const hasAwards = legs.some(leg => leg.calendar.dates.some(day => day[cabinKeys[p.cabin]] === true));
+      const hasAwards = legs.some(leg => leg.calendar.dates.some(day => awardCabins(day,p.cabin).length > 0));
       return source + (hasAwards ? ' 좌석 표시가 있는 날짜와 정보 기준 시각을 확인해 주세요.' : ' 선택한 등급의 보너스 좌석 표시가 있는 날짜는 없어요. 실시간 예약 현황은 대한항공에서 확인해 주세요.');
     }
     function renderLeg(leg) {
@@ -124,15 +125,18 @@
         const title = canChooseOutbound ? '가는 날을 먼저 골라 주세요.' : outbound?.calendar ? '가는 편에 선택할 수 있는 날짜가 없어요.' : '가는 편의 현황을 먼저 확인해 주세요.';
         section.append(placeholder(title, '오는 편의 보너스 좌석 표시가 있는 날짜는 ' + all.length + '일이에요. ' + (canChooseOutbound ? '가는 날을 고르면 여행 기간에 맞는 오는 날을 보여드려요.' : outbound?.calendar ? '가는 편의 노선·월·좌석 등급을 바꿔서 확인해 주세요.' : '가는 편의 조회를 완료한 뒤 오는 날을 선택할 수 있어요.')));
       }
-      else if(filtered.length === 0) section.append(placeholder(inbound && all.length ? '여행 기간에 맞는 오는 날이 없어요.' : '공개 현황에 ' + cabinNames[currentParams.cabin] + ' 보너스 좌석 표시가 없어요.',inbound && all.length ? '오는 편의 보너스 표시는 ' + all.length + '일에 있지만, 선택한 가는 날과 여행 기간에는 맞지 않아요. 가는 날이나 여행 기간을 바꿔 주세요.' : '이달의 ' + leg.calendar.dates.length + '일 전체를 확인한 결과예요. 실시간 매진을 뜻하지는 않아요. 현재 예약 가능한 좌석은 대한항공 예매 화면에서 확인해 주세요.'));
+      else if(filtered.length === 0) section.append(placeholder(inbound && all.length ? '여행 기간에 맞는 오는 날이 없어요.' : '공개 현황에 ' + (currentParams.cabin === 'all' ? '조회 가능한 등급의' : cabinNames[currentParams.cabin]) + ' 보너스 좌석 표시가 없어요.',inbound && all.length ? '오는 편의 보너스 표시는 ' + all.length + '일에 있지만, 선택한 가는 날과 여행 기간에는 맞지 않아요. 가는 날이나 여행 기간을 바꿔 주세요.' : '이달의 ' + leg.calendar.dates.length + '일 전체를 확인한 결과예요. 실시간 매진을 뜻하지는 않아요. 현재 예약 가능한 좌석은 대한항공 예매 화면에서 확인해 주세요.'));
       else {
         if(inbound) section.append(node('p','selection-note',prettyDate(outboundDate) + ' 출발 · 두 편의 출발일 간격이 ' + stayDays() + '일 이상인 날짜만 보여드려요.'));
         const grid = node('div','date-grid');
         for(const item of filtered) {
           const selected = (inbound ? inboundDate : outboundDate) === item.date;
-          const card = node('button','date-card' + (selected ? ' selected' : '')); card.type = 'button'; card.dataset.date = item.date; card.dataset.direction = leg.direction; card.setAttribute('aria-pressed',String(selected)); card.setAttribute('aria-label',item.date + ' ' + cabinNames[currentParams.cabin] + ' 마일리지 좌석, ' + (inbound ? '오는 날' : '가는 날') + ' 선택');
+          const availableCabins = awardCabins(item);
+          const card = node('button','date-card' + (selected ? ' selected' : '')); card.type = 'button'; card.dataset.date = item.date; card.dataset.direction = leg.direction; card.setAttribute('aria-pressed',String(selected)); card.setAttribute('aria-label',item.date + ' ' + availableCabins.map(name => cabinNames[name]).join(', ') + ' 마일리지 좌석, ' + (inbound ? '오는 날' : '가는 날') + ' 선택');
           const date = dateObject(item.date), day = new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',weekday:'short'}).format(date);
-          card.append(node('span','date-top',Number(item.date.slice(5,7)) + '월 · ' + day),node('span','date-number',String(Number(item.date.slice(8,10)))),node('span','date-badge','마일리지 좌석'));
+          card.append(node('span','date-top',Number(item.date.slice(5,7)) + '월 · ' + day),node('span','date-number',String(Number(item.date.slice(8,10)))));
+          if(currentParams.cabin === 'all') for(const name of availableCabins) card.append(node('span','date-badge',cabinNames[name]));
+          else card.append(node('span','date-badge','마일리지 좌석'));
           if(selected) { const mark = node('span','selected-mark','✓'); mark.setAttribute('aria-hidden','true'); card.append(mark); }
           card.addEventListener('click',() => { if(busy || handoffBusy) return; if(inbound) inboundDate = item.date; else { outboundDate = item.date; if(inboundDate && !inboundAllowed(inboundDate)) inboundDate = null; } resetHandoffStatus(); renderResults(); Array.from(document.querySelectorAll('.date-card')).find(button => button.dataset.date === item.date && button.dataset.direction === leg.direction)?.focus({preventScroll:true}); }); grid.append(card);
         }
@@ -153,7 +157,7 @@
       for(const leg of legs) container.append(renderLeg(leg));
       if(!legs.length) { const p = node('div','panel'); p.append(placeholder('아직 조회한 결과가 없어요.','조회 버튼을 눌러 마일리지 좌석을 확인해 주세요.')); container.append(p); }
       const round = currentParams.tripType === 'ROUND_TRIP';
-      $('results-description').textContent = round ? '가는 날과 오는 날을 차례로 골라 여행 일정을 확인해 보세요.' : (airportNames[currentParams.origin] || currentParams.origin) + ' → ' + (airportNames[currentParams.destination] || currentParams.destination) + ' · ' + cabinNames[currentParams.cabin] + ' · 좌석 승급 제외';
+      $('results-description').textContent = round ? '가는 날과 오는 날을 차례로 골라 여행 일정을 확인해 보세요.' : (airportNames[currentParams.origin] || currentParams.origin) + ' → ' + (airportNames[currentParams.destination] || currentParams.destination) + ' · ' + cabinNames[currentParams.cabin] + (currentParams.cabin === 'all' ? ' · 일등석·좌석 승급 제외' : ' · 좌석 승급 제외');
       $('journey').hidden = !legs.some(leg => leg.calendar);
       $('journey-text').textContent = outboundDate ? currentParams.origin + ' → ' + currentParams.destination + ' · ' + prettyDate(outboundDate) + (round ? (inboundDate ? ' 출발 / ' + prettyDate(inboundDate) + ' 오는 편 출발' : ' 출발 · 오는 날을 골라 주세요') : ' 출발') : '아직 선택한 날짜가 없어요.';
       syncControls();

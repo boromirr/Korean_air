@@ -29,6 +29,8 @@ SOURCE_URL = "https://www.koreanair.com/booking/book-and-manage/award-seat-avail
 SEOUL = timezone(timedelta(hours=9))
 CACHE_SECONDS = 12 * 3600
 CABINS = ("economy", "premium", "prestige")
+# "all" is a display choice, not an additional field in the saved calendar.
+CABIN_CHOICES = ("all",) + CABINS
 RESTRICTIONS = {"ACCESS_RESTRICTED", "USER_ACTION_REQUIRED", "LOGIN_REQUIRED"}
 HANDOFF_TIMEOUT_SECONDS = 150
 HANDOFF_STATUS_LIMIT = 8192
@@ -82,8 +84,8 @@ def validate_request(raw, today=None):
     if params["tripType"] not in ("ONE_WAY", "ROUND_TRIP"):
         raise AppError("INVALID_TRIP", "편도 또는 왕복을 선택해 주세요.")
     params["cabin"] = raw.get("cabin", "prestige")
-    if params["cabin"] not in CABINS:
-        raise AppError("INVALID_CABIN", "일반석, 프리미엄석, 비즈니스석 중에서 선택해 주세요.")
+    if params["cabin"] not in CABIN_CHOICES:
+        raise AppError("INVALID_CABIN", "전체, 일반석, 프리미엄석, 비즈니스석 중에서 선택해 주세요.")
     minimum, maximum = month_bounds(today)
     fields = ["month"] + (["returnMonth"] if params["tripType"] == "ROUND_TRIP" else [])
     for field in fields:

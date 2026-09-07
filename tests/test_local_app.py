@@ -81,6 +81,13 @@ class RequestValidationTests(unittest.TestCase):
                                           extra="ignored"), TODAY)
         self.assertEqual(params, PARAMS)
 
+    def test_all_cabin_choice_is_accepted_without_changing_the_default(self):
+        params = app.validate_request(dict(PARAMS, cabin="all"), TODAY)
+        self.assertEqual(params, dict(PARAMS, cabin="all"))
+        without_cabin = {key: value for key, value in PARAMS.items() if key != "cabin"}
+        self.assertEqual(app.validate_request(without_cabin, TODAY)["cabin"], "prestige")
+        self.assertNotIn("all", app.CABINS)
+
     def test_rejects_invalid_inputs_before_collection(self):
         cases = [
             (None, "INVALID_INPUT"),
@@ -129,6 +136,12 @@ class HandoffValidationTests(unittest.TestCase):
         self.assertEqual(app.validate_handoff_request(raw, TODAY), raw)
         same_day = dict(raw, returnMonth="2026-11", returnDate="2026-11-04")
         self.assertEqual(app.validate_handoff_request(same_day, TODAY), same_day)
+
+    def test_all_cabin_handoff_keeps_choice_and_both_validated_dates(self):
+        for raw in (dict(handoff_selection(), cabin="all"),
+                    dict(round_trip(), cabin="all", outboundDate="2026-11-04", returnDate="2026-12-02")):
+            with self.subTest(trip=raw["tripType"]):
+                self.assertEqual(app.validate_handoff_request(raw, TODAY), raw)
 
     def test_missing_impossible_mismatched_or_reversed_dates_are_rejected(self):
         cases = [
@@ -234,6 +247,33 @@ class TemporaryStoreTests(unittest.TestCase):
         self.assertEqual(result["status"], "complete")
         self.assertTrue(result["result"]["legs"][0]["cached"])
         collector.assert_not_called()
+
+    def test_all_reuses_existing_31_day_cache_without_an_all_award_field(self):
+        params = dict(PARAMS, month="2026-12")
+        leg = app.legs_for(params)[0]
+        value = synthetic_calendar(leg)
+        self.assertEqual(len(value["dates"]), 31)
+        self.assertTrue(all("allAward" not in row for row in value["dates"]))
+        self.store.save(value, leg)
+        self.store.write_json(self.store.block_path, {"code": "ACCESS_RESTRICTED"})
+        collector = mock.Mock(side_effect=AssertionError("Changing cabin must use the same cache"))
+        service = app.SearchService(self.store, collector)
+        for cabin in ("prestige", "all"):
+            with self.subTest(cabin=cabin):
+                request = dict(params, cabin=cabin)
+                job = await_job(service, service.start(request))
+                self.assertEqual(job["status"], "complete")
+                self.assertEqual(job["result"]["params"]["cabin"], cabin)
+                self.assertEqual(job["result"]["legs"][0]["calendar"], value)
+                self.assertTrue(job["result"]["legs"][0]["cached"])
+        collector.assert_not_called()
+        self.assertEqual(sorted(path.name for path in self.store.directory.glob("*.json")),
+                         [app.cache_key(leg) + ".json", "access-restricted.json"])
+        # Selection aliases must not weaken the real award-marker checks.
+        invalid = copy.deepcopy(value)
+        del invalid["dates"][0]["premiumAward"]
+        with self.assertRaises(ValueError):
+            app.validate_calendar(invalid, leg)
 
     def test_one_explicit_query_saves_verified_result_and_later_uses_cache(self):
         value = synthetic_calendar(self.leg)
@@ -377,6 +417,16 @@ class TemporaryStoreTests(unittest.TestCase):
         self.assertEqual(job["status"], "complete")
         self.assertEqual(job["result"], handoff_result(selection))
         self.assertEqual(self.store.read(self.leg), value)
+        handoff.assert_called_once_with(selection)
+        service.collector.assert_not_called()
+
+    def test_all_handoff_forwards_union_choice_unchanged(self):
+        selection = dict(handoff_selection(), cabin="all")
+        handoff = mock.Mock(side_effect=handoff_result)
+        service = app.SearchService(self.store, mock.Mock(), handoff)
+        job = await_job(service, service.start_handoff(selection))
+        self.assertEqual(job["status"], "complete")
+        self.assertEqual(job["result"], handoff_result(selection))
         handoff.assert_called_once_with(selection)
         service.collector.assert_not_called()
 
@@ -611,6 +661,21 @@ class HandoffProcessContractTests(unittest.TestCase):
                 self.assertEqual(raised.exception.code, expected)
                 self.assertNotIn("private", raised.exception.message)
                 stop.assert_called_once_with(self.process)
+
+    def test_all_handoff_process_keeps_all_in_stdin_and_checks_reported_choice(self):
+        selection = dict(handoff_selection(), cabin="all")
+        payload = {"status": "ready", "stage": "date_selected", "selection": selection}
+        with mock.patch.object(app, "read_handoff_status", return_value=payload), \
+             mock.patch.object(app.threading, "Thread"):
+            self.assertEqual(app.open_airline(selection, self.root), handoff_result(selection))
+        self.assertEqual(json.loads(self.process.stdin.write.call_args.args[0])["cabin"], "all")
+        payload["selection"] = dict(selection, cabin="prestige")
+        with mock.patch.object(app, "read_handoff_status", return_value=payload), \
+             mock.patch.object(app, "stop_handoff_process") as stop:
+            with self.assertRaises(app.AppError) as raised:
+                app.open_airline(selection, self.root)
+            self.assertEqual(raised.exception.code, "HANDOFF_FAILED")
+            stop.assert_called_once_with(self.process)
 
     def test_ready_selection_allows_absent_unused_return_fields(self):
         selection = handoff_selection()
@@ -953,6 +1018,22 @@ class HttpBoundaryTests(unittest.TestCase):
             self.assertEqual(status, 202)
             self.assertEqual(body, {"jobId": "b" * 32})
             start.assert_called_once_with(handoff_selection())
+        self.collector.assert_not_called()
+
+    def test_all_choice_is_accepted_by_cache_search_and_handoff_endpoints(self):
+        params = dict(PARAMS, cabin="all")
+        status, _, body = self.request("GET", "/api/cache?" + urlencode(params))
+        self.assertEqual(status, 200)
+        self.assertEqual(body["params"]["cabin"], "all")
+        with mock.patch.object(self.service, "start", return_value="c" * 32) as start:
+            status, _, _ = self.request("POST", "/api/search", params, {"Origin": self.origin})
+            self.assertEqual(status, 202)
+            start.assert_called_once_with(params)
+        selection = dict(handoff_selection(), cabin="all")
+        with mock.patch.object(self.service, "start_handoff", return_value="d" * 32) as start:
+            status, _, _ = self.request("POST", "/api/open-airline", selection, {"Origin": self.origin})
+            self.assertEqual(status, 202)
+            start.assert_called_once_with(selection)
         self.collector.assert_not_called()
 
     def test_handoff_cannot_be_triggered_by_get(self):

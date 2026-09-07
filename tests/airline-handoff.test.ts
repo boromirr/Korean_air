@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from 'vitest';
 import type { Page } from 'playwright';
 import { CollectionError } from '../src/collector.js';
 import {
-  HandoffAccessGuard, handoffSelectionPlan, normalizeHandoffSelection,
+  HandoffAccessGuard, handoffFilterPlan, handoffSelectionPlan, normalizeHandoffSelection,
   restrictedFirstPartyResponse, sanitizedHandoffFailure,
 } from '../src/airline-handoff.js';
 
@@ -19,7 +19,7 @@ describe('the selected itinerary crossing the localhost bridge', () => {
   it('normalizes airport codes and keeps the clicked date rather than the first award date', () => {
     expect(normalizeHandoffSelection({ ...oneWay, origin: ' icn ', destination: 'sin' }, now)).toEqual(oneWay);
     expect(handoffSelectionPlan(normalizeHandoffSelection(oneWay, now))).toMatchObject({
-      tripSuffix: 'OW', months: ['2026-11'], awardLabel: '프레스티지석 보너스', outboundDay: 5, returnDay: null,
+      tripSuffix: 'OW', months: ['2026-11'], awardLabels: ['프레스티지석 보너스'], outboundDay: 5, returnDay: null,
     });
   });
 
@@ -44,7 +44,7 @@ describe('the selected itinerary crossing the localhost bridge', () => {
       ...oneWay, tripType: 'ROUND_TRIP', returnMonth: '2026-11', returnDate: '2026-11-18',
     }, now);
     expect(handoffSelectionPlan(result)).toEqual({
-      tripSuffix: 'RT', months: ['2026-11', '2026-11'], awardLabel: '프레스티지석 보너스', outboundDay: 5, returnDay: 18,
+      tripSuffix: 'RT', months: ['2026-11', '2026-11'], awardLabels: ['프레스티지석 보너스'], outboundDay: 5, returnDay: 18,
     });
   });
 
@@ -55,6 +55,40 @@ describe('the selected itinerary crossing the localhost bridge', () => {
     { returnMonth: undefined, returnDate: '2026-12-01' },
   ])('rejects return dates that conflict with the selected journey: %j', (change) => {
     expect(() => normalizeHandoffSelection({ ...oneWay, tripType: 'ROUND_TRIP', ...change }, now)).toThrow();
+  });
+});
+
+describe('all-class handoff only includes unambiguous mileage award filters', () => {
+  it.each(['ONE_WAY', 'ROUND_TRIP'] as const)('accepts all classes for %s and preserves selected dates', (tripType) => {
+    const selection = normalizeHandoffSelection({
+      ...oneWay, cabin: 'all', tripType,
+      ...(tripType === 'ROUND_TRIP' ? { returnMonth: '2026-11', returnDate: '2026-11-18' } : {}),
+    }, now);
+    expect(selection.cabin).toBe('all');
+    expect(handoffSelectionPlan(selection)).toMatchObject({
+      awardLabels: ['일반석 보너스', '프리미엄석 보너스', '프레스티지석 보너스'],
+      outboundDay: 5, returnDay: tripType === 'ROUND_TRIP' ? 18 : null,
+    });
+  });
+
+  it('enables three award filters and explicitly disables both upgrades and the mixed first-class filter', () => {
+    expect(handoffFilterPlan('all')).toEqual([
+      { name: '일반석 보너스', checked: true },
+      { name: '프리미엄석 보너스', checked: true },
+      { name: '프레스티지석 보너스', checked: true },
+      { name: '프리미엄석 좌석승급', checked: false },
+      { name: '프레스티지석 좌석승급', checked: false },
+      { name: '일등석 보너스/좌석승급', checked: false },
+    ]);
+  });
+
+  it.each([
+    ['economy', '일반석 보너스'], ['premium', '프리미엄석 보너스'], ['prestige', '프레스티지석 보너스'],
+  ] as const)('keeps %s limited to its one award type', (cabin, name) => {
+    const plan = handoffFilterPlan(cabin);
+    expect(plan).toHaveLength(6);
+    expect(plan.filter(({ checked }) => checked)).toEqual([{ name, checked: true }]);
+    expect(plan.filter(({ name }) => name.includes('좌석승급')).every(({ checked }) => !checked)).toBe(true);
   });
 });
 
