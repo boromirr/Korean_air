@@ -766,7 +766,7 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         try:
             self.allowed(mutation=True)
-            if self.path not in ("/api/search", "/api/open-airline", "/api/open-account", "/api/sas/open", "/api/sas/search", "/api/sas/cancel", "/api/awards/open", "/api/awards/search", "/api/awards/cancel"):
+            if self.path not in ("/api/search", "/api/open-airline", "/api/open-account", "/api/sas/open", "/api/sas/search", "/api/sas/cancel", "/api/awards/open", "/api/awards/confirm-login", "/api/awards/search", "/api/awards/cancel"):
                 raise AppError("NOT_FOUND", "요청한 기능을 찾을 수 없어요.", 404)
             if self.headers.get("Content-Type", "").split(";", 1)[0].strip() != "application/json":
                 raise AppError("INVALID_INPUT", "검색 조건을 확인해 주세요.", 415)
@@ -781,6 +781,7 @@ class Handler(BaseHTTPRequestHandler):
                 if not isinstance(payload, dict): raise SasError("INVALID_QUERY")
                 program = payload.get("program")
                 if self.path.endswith("/open"): result = self.server.award_service.open(program)
+                elif self.path.endswith("/confirm-login"): result = self.server.award_service.confirm_login(program)
                 elif self.path.endswith("/cancel"): result = self.server.award_service.cancel(program)
                 else: result = self.server.award_service.start(payload)
                 self.respond(result)

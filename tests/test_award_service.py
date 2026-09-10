@@ -43,13 +43,25 @@ class ProgressTests(unittest.TestCase):
         self.assertEqual(job['status'],'partial');self.assertEqual(job['completed'],1)
         self.assertEqual(job['legs'][0]['days'][1]['status'],'unsearched')
     def test_failed_search_is_not_empty(self):
-        job=self.job('star-alliance');self.service.worker.call.return_value=dict(status='failed',code='ACCESS_RESTRICTED')
+        job=self.job('star-alliance')
+        def stream(action,queries=None,**kwargs):
+            if action=='cancel':return {'state':'cancelled'}
+            q={k:queries[0][k] for k in ('origin','destination','date')}
+            kwargs['on_event']({'type':'result','query':q,'result':{'status':'failed','code':'ACCESS_RESTRICTED'}})
+            return {'status':'failed','code':'ACCESS_RESTRICTED'}
+        self.service.worker.call.side_effect=stream
         self.service._run(job)
         self.assertEqual(job['status'],'failed');self.assertEqual(job['completed'],0)
         self.assertEqual(job['legs'][0]['days'][0]['status'],'failed')
         self.assertEqual(job['legs'][0]['days'][1]['status'],'unsearched')
     def test_wrong_route_result_is_rejected(self):
-        job=self.job('star-alliance');self.service.worker.call.return_value=dict(origin='LAX',destination='NRT',date='2026-11-01',status='available')
+        job=self.job('star-alliance')
+        def stream(action,queries=None,**kwargs):
+            if action=='cancel':return {'state':'cancelled'}
+            q={k:queries[0][k] for k in ('origin','destination','date')}
+            kwargs['on_event']({'type':'result','query':q,'result':dict(q,origin='LAX',status='available')})
+            return {'status':'complete'}
+        self.service.worker.call.side_effect=stream
         self.service._run(job);self.assertEqual(job['code'],'QUERY_MISMATCH')
     def test_cancelling_another_program_does_not_stop_active_job(self):
         self.assertEqual(self.service.cancel('skyteam'),{'status':'idle'})
@@ -59,11 +71,52 @@ class ProgressTests(unittest.TestCase):
         p,legs=plan(query(program='sas-eurobonus',tripType='ROUND_TRIP',returnMonth='2026-11'),TODAY)
         job=dict(params=p,legs=legs,status='running',completed=0,total=60,code=None)
         self.service.sas=SimpleNamespace(worker=Mock(),store=Mock())
-        def search(action,q):
-            result=sample();result.update(q,freshSearch=True);return result
+        def search(action,queries,timeout,on_event):
+            self.assertEqual(action,'search-month')
+            for q in reversed(queries):
+                result=sample();result.update(q,freshSearch=True)
+                on_event({'type':'searching','query':q})
+                on_event({'type':'result','query':q,'result':result})
+            return {'status':'complete'}
         self.service.sas.worker.call.side_effect=search
         self.service._run(job)
         self.assertEqual(job['status'],'complete')
         self.assertEqual(job['completed'],60)
-        self.assertEqual(self.service.sas.worker.call.call_args_list[30].args[1],dict(origin='NRT',destination='ICN',date='2026-11-01'))
+        self.assertEqual(self.service.sas.worker.call.call_args_list[1].args[1][0],dict(origin='NRT',destination='ICN',date='2026-11-01'))
         self.assertEqual(job['legs'][1]['days'][0]['flights'][0]['cabin'],'business')
+
+class LoginConfirmationTests(unittest.TestCase):
+    def test_confirmation_uses_selected_profile_and_does_not_start_search(self):
+        sas=SimpleNamespace(thread=None,worker=Mock())
+        service=AwardService('.',sas)
+        service.worker=Mock()
+        sas.worker.call.return_value={'state':'ready','authenticated':True}
+        service.worker.call.return_value={'state':'login_required'}
+        self.assertTrue(service.confirm_login('sas-eurobonus')['browser']['authenticated'])
+        sas.worker.call.assert_called_once_with('confirm-login',timeout=75,program='sas-eurobonus')
+        self.assertEqual(service.confirm_login('korean-air')['browser']['state'],'login_required')
+        service.worker.call.assert_called_once_with('confirm-login',timeout=75,program='korean-air')
+        self.assertEqual(service.jobs,{})
+        service.thread=Mock()
+        service.thread.is_alive.return_value=True
+        with self.assertRaisesRegex(SasError,'BUSY'):service.confirm_login('sas-eurobonus')
+
+class SasMonthFailureTests(ProgressTests):
+    def test_stream_failure_preserves_finished_dates_and_does_not_mark_rest_empty(self):
+        from test_sas_store import sample
+        job=self.job('sas-eurobonus')
+        self.service.sas=SimpleNamespace(worker=Mock(),store=Mock())
+        def stream(action,queries=None,timeout=180,on_event=None):
+            if action=='cancel':return {'state':'cancelled'}
+            first=sample();first.update(queries[0],freshSearch=True)
+            on_event({'type':'result','query':queries[0],'result':first})
+            on_event({'type':'searching','query':queries[1]})
+            on_event({'type':'result','query':queries[1],'result':{'status':'failed','code':'ACCESS_RESTRICTED'}})
+            on_event({'type':'searching','query':queries[2]})
+            return {'status':'failed','code':'ACCESS_RESTRICTED'}
+        self.service.sas.worker.call.side_effect=stream
+        self.service._run(job)
+        self.assertEqual(job['code'],'ACCESS_RESTRICTED')
+        self.assertEqual(job['completed'],1)
+        self.assertEqual(job['legs'][0]['days'][1]['status'],'failed')
+        self.assertEqual(job['legs'][0]['days'][2]['status'],'unsearched')

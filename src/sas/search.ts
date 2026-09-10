@@ -1,4 +1,4 @@
-import type { Page } from 'playwright';
+import type { Page,Response } from 'playwright';
 import { parseSasRow } from './parser.js';
 import { sasRestriction } from './status.js';
 export interface SasQuery {origin:string;destination:string;date:string}
@@ -42,6 +42,18 @@ async function date(page:Page,value:string) {
   if(await input.inputValue()!==value)throw new Error('DATE_UNAVAILABLE');
 }
 export async function searchSas(page:Page,q:SasQuery,cancelled:()=>boolean) {
+  let diagnostic:unknown;
+  let responseCount:number|undefined,responseError:string|undefined;
+  const received=async(response:Response)=>{
+    const url=new URL(response.url());
+    if(url.hostname!=='www.flysas.com'||url.pathname!=='/award-api/flights')return;
+    if(url.searchParams.get('origin')!==q.origin||url.searchParams.get('destination')!==q.destination||url.searchParams.get('outboundDate')!==q.date)return;
+    if([401].includes(response.status())){responseError='LOGIN_REQUIRED';return;}
+    if([403,429].includes(response.status())){responseError='ACCESS_RESTRICTED';return;}
+    if(!response.ok()){responseError='SEARCH_FAILED';return;}
+    try{const data=await response.json();if(!Array.isArray(data.outboundFlights)){responseError='UNRECOGNIZED_RESULT';return;}responseCount=data.outboundFlights.length;}catch{responseError='SEARCH_FAILED';}
+  };
+  page.on('response',received);
   try {
     await check(page,cancelled);
     // Start a new official search document every time; never reuse an old result page.
@@ -63,13 +75,16 @@ export async function searchSas(page:Page,q:SasQuery,cancelled:()=>boolean) {
       await page.locator('#one-way').click();
       await airport(page,'From',q.origin);await airport(page,'To',q.destination);await date(page,q.date);
       await check(page,cancelled);
+      responseCount=undefined;responseError=undefined;
       await page.getByRole('button',{name:'Search',exact:true}).click();
     }
     const empty=page.getByText("We couldn't find any flights for the selected dates.",{exact:true});
     const end=Date.now()+90000;
     while(Date.now()<end) {
       await check(page,cancelled);
-      if(await page.locator('[data-testid^="award-flight-row-"]').count() || await empty.isVisible())break;
+      if(responseError)throw new Error(responseError);
+      const shown=await page.locator('[data-testid^="award-flight-row-"]').count();
+      if(responseCount!==undefined && (responseCount>0?shown>0&&!await empty.isVisible():shown===0&&await empty.isVisible()))break;
       if(/something went wrong/i.test(await page.locator('body').innerText()))throw new Error('SEARCH_FAILED');
       await page.waitForTimeout(500);
     }
@@ -81,6 +96,7 @@ export async function searchSas(page:Page,q:SasQuery,cancelled:()=>boolean) {
     }
     await check(page,cancelled);
     if(await edit.isVisible())await edit.click();
+    await form.waitFor({state:'visible',timeout:15000});
     const result=await page.evaluate(()=>{
       const root=document.getElementById('award-outbound-flights');
       const inputs=[...document.querySelectorAll('input')].filter(e=>Boolean(e.getClientRects().length));
@@ -91,11 +107,13 @@ export async function searchSas(page:Page,q:SasQuery,cancelled:()=>boolean) {
         shownDate:(root?.querySelector('ul li:nth-child(2)') as HTMLElement)?.innerText?.trim(),
         rows:root?[...root.querySelectorAll('[data-testid^="award-flight-row-"]')].filter(e=>Boolean(e.getClientRects().length)).map(e=>(e as HTMLElement).innerText):[]};
     });
+    diagnostic={expected:q,observed:{origin:result.origin,destination:result.destination,date:result.date,oneWay:result.oneWay,oneTraveler:result.oneTraveler,route:result.route,shownDate:result.shownDate}};
     if(['origin','destination','date'].some(k=>result[k as keyof typeof result]!==q[k as keyof SasQuery])||!result.oneWay||!result.oneTraveler)throw new Error('QUERY_MISMATCH');
     const expected=new Intl.DateTimeFormat('en-GB',{timeZone:'UTC',weekday:'short',day:'2-digit',month:'short'}).format(new Date(q.date+'T12:00:00Z')).replace(/,/g,'');
     if(result.rows.length && (result.route!==q.origin+'-'+q.destination || result.shownDate?.replace(/\s+/g,' ')!==expected))throw new Error('QUERY_MISMATCH');
     if(!result.rows.length && !await empty.isVisible())throw new Error('SEARCH_TIMEOUT');
-    return {...q,status:result.rows.length?'available':'empty',flights:result.rows.map(parseSasRow),complete:!await page.getByRole('button',{name:/^Show more flights/}).isVisible(),
+    return {...q,status:result.rows.length?'available' as const:'empty' as const,flights:result.rows.map(parseSasRow),complete:!await page.getByRole('button',{name:/^Show more flights/}).isVisible(),
       observedAt:new Date().toISOString(),source:'SAS_EUROBONUS_VISIBLE_RESULTS',freshSearch:true,adults:1,tripType:'ONE_WAY'};
-  } catch(error) {const code=error instanceof Error?error.message:'';return {status:'failed',code:/^[A-Z_]+$/.test(code)?code:'SEARCH_FAILED'};}
+  } catch(error) {const code=error instanceof Error?error.message:'';return {status:'failed' as const,code:/^[A-Z_]+$/.test(code)?code:'SEARCH_FAILED',...(code==='QUERY_MISMATCH'?{diagnostic}: {})};}
+  finally{page.off('response',received);}
 }

@@ -4,7 +4,7 @@ import copy
 import json
 import re
 import threading
-from datetime import date,timedelta
+from datetime import date,timedelta,datetime,timezone
 from pathlib import Path
 from sas_service import SasWorker,SasError
 from sas_store import validated
@@ -56,7 +56,7 @@ class AwardService:
         self.lock=threading.RLock();self.stop=threading.Event();self.jobs={};self.thread=None
     def status(self,program):
         if program not in PROGRAMS:raise SasError('INVALID_QUERY')
-        browser=self.sas.worker.call('status',timeout=5) if program=='sas-eurobonus' else self.worker.call('status',timeout=5,program=program)
+        browser=self.sas.status()['browser'] if program=='sas-eurobonus' else self.worker.call('status',timeout=5,program=program)
         with self.lock:return {'browser':browser,'job':copy.deepcopy(self.jobs.get(program))}
     def open(self,program):
         if program not in PROGRAMS+('korean-air',):raise SasError('INVALID_QUERY')
@@ -64,12 +64,21 @@ class AwardService:
         browser=self.worker.call('open',timeout=60,program=program)
         if browser.get('status')=='failed':raise SasError(browser.get('code','BROWSER_ERROR'))
         return {'browser':browser}
+    def confirm_login(self,program):
+        if program not in PROGRAMS+('korean-air',):raise SasError('INVALID_QUERY')
+        with self.lock:
+            if self.thread and self.thread.is_alive():raise SasError('BUSY')
+            if self.sas.thread and self.sas.thread.is_alive():raise SasError('BUSY')
+        worker=self.sas.worker if program=='sas-eurobonus' else self.worker
+        browser=worker.call('confirm-login',timeout=75,program=program)
+        if browser.get('status')=='failed':raise SasError(browser.get('code','BROWSER_ERROR'))
+        return {'browser':browser}
     def start(self,raw):
         p,legs=plan(raw)
         with self.lock:
             if self.thread and self.thread.is_alive():raise SasError('BUSY')
             if self.sas.thread and self.sas.thread.is_alive():raise SasError('BUSY')
-            self.stop.clear();job={'params':p,'legs':legs,'status':'running','completed':0,'total':sum(len(l['days']) for l in legs),'code':None}
+            self.stop.clear();job={'params':p,'legs':legs,'status':'running','completed':0,'total':sum(len(l['days']) for l in legs),'code':None,'startedAt':datetime.now(timezone.utc).isoformat()}
             self.jobs[p['program']]=job
             self.thread=threading.Thread(target=self._run,args=(job,),daemon=True);self.thread.start()
             return {'job':copy.deepcopy(job)}
@@ -78,7 +87,9 @@ class AwardService:
         try:
             for leg in job['legs']:
                 if self.stop.is_set():return
-                if program=='asiana-club':
+                if program=='sas-eurobonus':
+                    self._run_sas_month(job,leg)
+                elif program=='asiana-club':
                     r=self.worker.call('search', {k:leg[k] for k in ('origin','destination','month')},program=program)
                     if self.stop.is_set():return
                     if r.get('status')=='failed':raise SasError(r.get('code','SEARCH_FAILED'))
@@ -89,41 +100,94 @@ class AwardService:
                             if d['date'] in bydate:d.update(bydate[d['date']]);d['observedAt']=r['observedAt'];d['sourceAt']=r.get('sourceAt');job['completed']+=1
                     self._save(job)
                 else:
-                    for day in leg['days']:
-                        if self.stop.is_set():return
-                        q={'origin':leg['origin'],'destination':leg['destination'],'date':day['date']}
-                        with self.lock:day['status']='searching'
-                        if program=='sas-eurobonus':
-                            r=self.sas.worker.call('search',q)
-                            if r.get('status')=='failed':raise SasError(r.get('code','SEARCH_FAILED'))
-                            r=validated(r)
-                            if any(r[k]!=v for k,v in q.items()) or not r['freshSearch']:raise SasError('QUERY_MISMATCH')
-                            self.sas.store.save(r)
-                            flights=[dict(fare,departureTime=f['departureTime'],operatedBy=f['operatedBy'],itinerary=f['itinerary']) for f in r['flights'] for fare in f['fares']]
-                            result={'status':'available' if flights else 'empty','cabins':list(set(f['cabin'] for f in flights)),'flights':flights,'observedAt':r['observedAt']}
-                        else:
-                            search_q=dict(q,cabin=job['params']['cabin'])
-                            if program=='skyteam':
-                                search_q.update(origin=job['params']['origin'],destination=job['params']['destination'],direction=leg['direction'],date=day['date'] if leg['direction']=='outbound' else leg['referenceDate'],returnDate=leg['referenceDate'] if leg['direction']=='outbound' else day['date'])
-                            r=self.worker.call('search',search_q,program=program,timeout=480 if program=='skyteam' else 180)
-                            if r.get('status')=='failed':raise SasError(r.get('code','SEARCH_FAILED'))
-                            if any(r.get(k)!=v for k,v in q.items()):raise SasError('QUERY_MISMATCH')
-                            if r.get('status') not in ('available','empty','partial'):raise SasError('UNRECOGNIZED_RESULT')
-                            result=r
-                        if self.stop.is_set():return
-                        with self.lock:day.update(result);job['completed']+=1
-                        self._save(job)
-                        if result.get('status')=='partial' and result.get('code')!='REFERENCE_UNAVAILABLE':raise SasError(result.get('code','UNRECOGNIZED_RESULT'))
-                        if job['completed']<job['total'] and self.stop.wait(self.interval):return
+                    self._run_partner_month(job,leg)
+            if self.stop.is_set():return
             with self.lock:job['status']='complete' if job['completed']==job['total'] and all(d['status'] in ('available','empty') for leg in job['legs'] for d in leg['days']) else 'partial'
             self._save(job)
         except Exception as e:
             with self.lock:
                 if self.stop.is_set():return
                 job['status']='failed';job['code']=e.code if isinstance(e,SasError) else 'SEARCH_FAILED'
+                if program=='sas-eurobonus' and job['code']=='ACCESS_RESTRICTED' and callable(getattr(self.sas,'record_browser',None)):self.sas.record_browser({'state':'restricted'})
                 for leg in job['legs']:
                     for d in leg['days']:
                         if d['status']=='searching':d['status']='failed'
+        finally:
+            with self.lock:job['finishedAt']=datetime.now(timezone.utc).isoformat()
+            self._save(job)
+    def _run_sas_month(self,job,leg):
+        queries=[dict(origin=leg['origin'],destination=leg['destination'],date=d['date']) for d in leg['days']]
+        days={d['date']:d for d in leg['days']}
+        finished=set()
+        def progress(event):
+            if self.stop.is_set():return
+            q=event.get('query',{})
+            if q not in queries:raise SasError('QUERY_MISMATCH')
+            day=days[q['date']]
+            if event.get('type')=='searching':
+                with self.lock:day['status']='searching'
+                return
+            if event.get('type')!='result' or q['date'] in finished:raise SasError('UNRECOGNIZED_RESULT')
+            r=event.get('result',{})
+            if r.get('status')=='failed':
+                with self.lock:day['status']='failed';day['code']=r.get('code','SEARCH_FAILED')
+                return
+            r=validated(r)
+            if any(r[k]!=v for k,v in q.items()) or not r['freshSearch']:raise SasError('QUERY_MISMATCH')
+            self.sas.store.save(r)
+            flights=[dict(fare,departureTime=f['departureTime'],operatedBy=f['operatedBy'],itinerary=f['itinerary']) for f in r['flights'] for fare in f['fares']]
+            with self.lock:
+                day.update(status='available' if flights else 'empty',cabins=list(set(f['cabin'] for f in flights)),flights=flights,observedAt=r['observedAt'])
+                job['completed']+=1;finished.add(q['date'])
+            self._save(job)
+        try:
+            result=self.sas.worker.call('search-month',queries,timeout=600,on_event=progress)
+            if self.stop.is_set():return
+            if result.get('status')!='complete':raise SasError(result.get('code') or 'SEARCH_FAILED')
+            if len(finished)!=len(queries):raise SasError('UNRECOGNIZED_RESULT')
+        except Exception:
+            self.sas.worker.call('cancel',timeout=5)
+            raise
+        finally:
+            with self.lock:
+                for day in leg['days']:
+                    if day['status']=='searching':day['status']='unsearched'
+    def _run_partner_month(self,job,leg):
+        program=job['params']['program'];queries=[]
+        days={d['date']:d for d in leg['days']};finished=set()
+        for day in leg['days']:
+            q=dict(origin=leg['origin'],destination=leg['destination'],date=day['date'],cabin=job['params']['cabin'])
+            if program=='skyteam':q.update(origin=job['params']['origin'],destination=job['params']['destination'],direction=leg['direction'],date=day['date'] if leg['direction']=='outbound' else leg['referenceDate'],returnDate=leg['referenceDate'] if leg['direction']=='outbound' else day['date'])
+            queries.append(q)
+        def progress(event):
+            if self.stop.is_set():return
+            q=event.get('query',{})
+            if q.get('origin')!=leg['origin'] or q.get('destination')!=leg['destination'] or q.get('date') not in days:raise SasError('QUERY_MISMATCH')
+            day=days[q['date']]
+            if event.get('type')=='searching':
+                with self.lock:day['status']='searching'
+                return
+            if event.get('type')!='result' or q['date'] in finished:raise SasError('UNRECOGNIZED_RESULT')
+            r=event.get('result',{})
+            if r.get('status')=='failed':
+                with self.lock:day['status']='failed';day['code']=r.get('code','SEARCH_FAILED')
+                return
+            if any(r.get(k)!=q[k] for k in ('origin','destination','date')):raise SasError('QUERY_MISMATCH')
+            if r.get('status') not in ('available','empty','partial'):raise SasError('UNRECOGNIZED_RESULT')
+            with self.lock:day.update(r);job['completed']+=1;finished.add(q['date'])
+            self._save(job)
+        try:
+            result=self.worker.call('search-month',queries,program=program,timeout=1800,on_event=progress)
+            if self.stop.is_set():return
+            if result.get('status')!='complete':raise SasError(result.get('code') or 'SEARCH_FAILED')
+            if len(finished)!=len(queries):raise SasError('UNRECOGNIZED_RESULT')
+        except Exception:
+            self.worker.call('cancel',program=program,timeout=5)
+            raise
+        finally:
+            with self.lock:
+                for day in leg['days']:
+                    if day['status']=='searching':day['status']='unsearched'
     def _save(self,job):
         p=self.root/'data/local/month-results';p.mkdir(parents=True,exist_ok=True)
         (p/(job['params']['program']+'.json')).write_text(json.dumps(job,ensure_ascii=False),encoding='utf-8')

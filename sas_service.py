@@ -7,6 +7,7 @@ import queue
 import shutil
 import subprocess
 import threading
+import time
 import uuid
 from sas_store import validated
 
@@ -70,7 +71,7 @@ class SasWorker:
                     with self.lock:
                         wait=self.pending.get(value.get('id'))
                     if wait:
-                        wait.put_nowait(value.get('result'))
+                        wait.put_nowait({'event':value['event']} if 'event' in value else value.get('result'))
                 except (ValueError, UnicodeError, AttributeError, queue.Full):
                     continue
         finally:
@@ -81,9 +82,9 @@ class SasWorker:
                         try: wait.put_nowait({'status':'failed','code':'BROWSER_ERROR'})
                         except queue.Full: pass
 
-    def call(self, action, query=None, timeout=180, program=None):
+    def call(self, action, query=None, timeout=180, program=None, on_event=None):
         identity=uuid.uuid4().hex
-        waiting=queue.Queue(maxsize=1)
+        waiting=queue.Queue(maxsize=128 if on_event else 1)
         with self.lock:
             if action in ('status','cancel') and (not self.process or self.process.poll() is not None):
                 return {'state':'closed'}
@@ -96,7 +97,13 @@ class SasWorker:
                 self.pending.pop(identity,None)
                 raise SasError('BROWSER_ERROR')
         try:
-            result=waiting.get(timeout=timeout)
+            deadline=time.monotonic()+timeout
+            while True:
+                result=waiting.get(timeout=max(0,deadline-time.monotonic()))
+                if isinstance(result,dict) and 'event' in result:
+                    if on_event:on_event(result['event'])
+                    continue
+                break
             if not isinstance(result,dict):
                 raise SasError('BROWSER_ERROR')
             return result

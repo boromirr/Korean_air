@@ -11,15 +11,15 @@ function fixture(destination='CDG') {
   <input aria-label="Outbound date *" placeholder="Outbound date" value="2026-11-04">
   <h4>ONE WAY</h4><h5>1 TRAVELER</h5><p>1 adult</p>
   <button id="search">Search</button><div id="result"></div><script>
-  document.getElementById('search').onclick=()=>setTimeout(()=>{
+  document.getElementById('search').onclick=async()=>{await fetch('/award-api/flights?origin=AMS&destination=CDG&outboundDate=2026-11-04');setTimeout(()=>{
     document.getElementById('result').innerHTML='<div id="award-outbound-flights"><h2><span>AMS</span><span>${destination}</span></h2><ul><li>Tue 03 Nov</li><li>Wed 04 Nov</li><li>Thu 05 Nov</li></ul><div data-testid="award-flight-row-test">06:55 - 08:10<br>Direct, 1h 15m<br>AMS<br>CDG<br>Operated by TEST (AMS-CDG)<br>business<br>48,000 p</div></div>';
-  },50);</script></body>`;
+  },50);};</script></body>`;
 }
 test('new search navigates again; mismatched result is rejected',async()=>{
   const browser=await chromium.launch({channel:'chrome',headless:true});
   try {
     const page=await browser.newPage();let requests=0,body=fixture();
-    await page.route('**/*',route=>{requests++;return route.fulfill({contentType:'text/html',body});});
+    await page.route('**/*',route=>{requests++;if(route.request().url().includes('/award-api/flights'))return route.fulfill({json:{outboundFlights:[{}]}});return route.fulfill({contentType:'text/html',body});});
     await page.goto('https://www.flysas.com/en/booking/award/');
     const first=await searchSas(page,query,()=>false);
     assert.equal(first.status,'available');assert.equal(first.freshSearch,true);
@@ -29,6 +29,14 @@ test('new search navigates again; mismatched result is rejected',async()=>{
     const second=await searchSas(page,query,()=>false);
     assert.equal(second.status,'available');assert.ok(requests>before);
     body=fixture('LHR');
-    assert.deepEqual(await searchSas(page,query,()=>false),{status:'failed',code:'QUERY_MISMATCH'});
+    const mismatch=await searchSas(page,query,()=>false);assert.equal(mismatch.status,'failed');assert.equal(mismatch.code,'QUERY_MISMATCH');
   } finally {await browser.close();}
+});
+test('does not treat a temporary empty panel as a completed airline response',async()=>{
+ const b=await chromium.launch({channel:'chrome',headless:true});try{const p=await b.newPage();let received=false;
+ const body=fixture().replace("await fetch('/award-api/flights?origin=AMS&destination=CDG&outboundDate=2026-11-04');", "document.getElementById('result').innerHTML=\"<p>We couldn't find any flights for the selected dates.</p>\";await fetch('/award-api/flights?origin=AMS&destination=CDG&outboundDate=2026-11-04');");
+ await p.route('**/*',async route=>{if(route.request().url().includes('/award-api/flights')){await new Promise(r=>setTimeout(r,300));received=true;return route.fulfill({json:{outboundFlights:[{}]}});}return route.fulfill({contentType:'text/html',body});});
+ await p.goto('https://www.flysas.com/en/booking/award/');
+ const result=await searchSas(p,query,()=>false);assert.equal(received,true);assert.equal(result.status,'available');assert.equal(result.flights.length,1);
+ }finally{await b.close();}
 });

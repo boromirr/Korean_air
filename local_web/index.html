@@ -23,7 +23,7 @@
       <section class="panel search-panel" aria-label="조회 조건">
         <form id="search-form">
           <div class="program-row"><label class="field"><span class="field-label">마일리지 프로그램</span><select id="program" name="program"><option value="korean-air" selected>대한항공 스카이패스</option><option value="sas-eurobonus">SAS 유로보너스</option><option value="asiana-club">아시아나클럽</option><option value="skyteam">스카이팀 · 대한항공 마일리지</option><option value="star-alliance">스타얼라이언스 · 아시아나 마일리지</option></select></label><p class="program-hint" id="program-hint">대한항공 공개 보너스 좌석 달력을 로그인 없이 조회합니다.</p></div>
-          <div style="margin-bottom:20px"><button type="button" class="provider-link" id="open-account-button" style="margin-top:0;border:0">대한항공 로그인·예약 열기 ↗</button><p class="program-hint" style="margin:8px 0 0" id="account-note">조회용 Chrome에서 로그인합니다. 공개 좌석 달력 조회에는 로그인이 필요 없습니다.</p><p class="program-hint" id="account-status" role="status" aria-live="polite" style="margin:8px 0 0"></p></div>
+          <div style="margin-bottom:20px"><div id="account-actions" style="display:flex;gap:10px;flex-wrap:wrap"><button type="button" class="provider-link" id="open-account-button" style="margin-top:0;border:0">대한항공 로그인·예약 열기 ↗</button> <button type="button" class="provider-link" id="confirm-account-button" style="margin-top:0;border:0">로그인 완료·확인</button><button id="award-cancel" class="provider-link" type="button" style="margin-top:0;border:0" hidden disabled>조회 중단</button></div><p class="program-hint" style="margin:8px 0 0" id="account-note">조회용 Chrome에서 로그인합니다. 공개 좌석 달력 조회에는 로그인이 필요 없습니다.</p><p class="program-hint" id="account-status" role="status" aria-live="polite" style="margin:8px 0 0"></p></div>
           <div id="korean-search-controls">
           <div class="form-top"><fieldset class="trip-options"><legend class="sr-only">여정 종류</legend><label><input type="radio" name="tripType" value="ONE_WAY" checked><span>편도</span></label><label><input type="radio" name="tripType" value="ROUND_TRIP"><span>왕복</span></label></fieldset><span class="form-hint">조건을 바꾸면 저장된 결과를 보여드려요.</span></div>
           <div class="search-grid">
@@ -46,7 +46,6 @@
       <section id="award-area" hidden style="margin-top:24px">
         <div class="panel search-panel">
           <h2 id="award-title">월별 마일리지 좌석 조회</h2>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin:16px 0"><button id="award-open" class="provider-link" type="button">로그인·조회 창 열기</button><button id="award-refresh" class="provider-link" type="button">연결 상태 확인</button><button id="award-cancel" class="provider-link" type="button" disabled>조회 중단</button></div>
           <p id="award-connection" role="status"></p>
           <form id="award-form">
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:14px">
@@ -269,7 +268,7 @@
     function syncControls() {
       const working = busy || handoffBusy;
       if(working) for(const kind of ['origin','destination']) closeAirport(kind);
-      for(const el of form.querySelectorAll('input,select,button')) el.disabled = working;
+      for(const el of form.querySelectorAll('input,select,button:not(#award-cancel)')) el.disabled = working;
       $('search-button').disabled = working || !config;
       for(const card of document.querySelectorAll('.date-card')) card.disabled = working;
       $('open-airline-button').disabled = working || !handoffReady();
@@ -457,6 +456,7 @@
       writeAirport('origin',destination); writeAirport('destination',origin); closeAirport('origin'); closeAirport('destination');
       updateRouteNote(); scheduleCache();
     });
+    $('confirm-account-button').addEventListener('click',()=>window.AwardLocal?.confirmLogin(fields.program.value));
     $('open-account-button').addEventListener('click', async () => {
       if(!koreanAirSelected()) { await window.AwardLocal?.open(); return; }
       const button = $('open-account-button'); button.disabled = true;

@@ -1,0 +1,108 @@
+{
+  "verifiedAt": "2026-09-10T15:47:17.658613+09:00",
+  "route": "ICN→NRT",
+  "outboundMonth": "2027-05",
+  "skyteamReturnMonth": "2027-06",
+  "cabin": "all",
+  "timing": "Search request to observed terminal state; polling up to 2 seconds; login preparation excluded. One live run per available program.",
+  "results": [
+    {
+      "program": "korean-air",
+      "status": "complete",
+      "seconds": 6.04,
+      "error": null,
+      "cached": false,
+      "calendarDays": 31,
+      "uniqueDates": 31,
+      "method": "MONTHLY_CALENDAR"
+    },
+    {
+      "program": "asiana-club",
+      "status": "complete",
+      "seconds": 6.06,
+      "processed": 31,
+      "total": 31,
+      "code": null,
+      "legs": [
+        {
+          "direction": "outbound",
+          "month": "2027-05",
+          "days": 31,
+          "counts": {
+            "available": 31
+          },
+          "errors": {}
+        }
+      ],
+      "method": "MONTHLY_CALENDAR",
+      "startedAt": "2026-09-10T06:35:35.405410+00:00",
+      "finishedAt": "2026-09-10T06:35:39.710119+00:00",
+      "workerSeconds": 4.3
+    },
+    {
+      "program": "star-alliance",
+      "status": "complete",
+      "seconds": 112.43,
+      "processed": 31,
+      "total": 31,
+      "code": null,
+      "legs": [
+        {
+          "direction": "outbound",
+          "month": "2027-05",
+          "days": 31,
+          "counts": {
+            "available": 31
+          },
+          "errors": {}
+        }
+      ],
+      "method": "PARALLEL_DAILY",
+      "startedAt": "2026-09-10T06:35:44.511623+00:00",
+      "finishedAt": "2026-09-10T06:37:36.344306+00:00",
+      "workerSeconds": 111.83
+    },
+    {
+      "program": "skyteam",
+      "status": "partial",
+      "seconds": 542.49,
+      "processed": 61,
+      "total": 61,
+      "code": null,
+      "legs": [
+        {
+          "direction": "outbound",
+          "month": "2027-05",
+          "days": 31,
+          "counts": {
+            "empty": 9,
+            "available": 22
+          },
+          "errors": {}
+        },
+        {
+          "direction": "inbound",
+          "month": "2027-06",
+          "days": 30,
+          "counts": {
+            "partial": 30
+          },
+          "errors": {
+            "REFERENCE_UNAVAILABLE": 30
+          }
+        }
+      ],
+      "method": "PARALLEL_DAILY_ROUND_TRIP",
+      "startedAt": "2026-09-10T06:37:44.766332+00:00",
+      "finishedAt": "2026-09-10T06:46:46.169586+00:00",
+      "workerSeconds": 541.4
+    },
+    {
+      "program": "sas-eurobonus",
+      "status": "restricted",
+      "seconds": null,
+      "note": "기존 접속 제한 상태; 추가 검색하지 않음",
+      "method": "PARALLEL_DAILY"
+    }
+  ]
+}

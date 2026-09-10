@@ -80,18 +80,18 @@ async function searchSkyClass(page:Page,q:Query,cancelled:()=>boolean){
       flights.push(...parseSkyFlights(labels,targetOrigin,targetDestination,cabin).map(f=>({...f,referenceFlight})));
     }
     return {origin:targetOrigin,destination:targetDestination,date:q.direction==='inbound'?q.returnDate:q.date,status:flights.length?'available':'empty',cabins:[...new Set(flights.map(f=>f.cabin))],flights,referenceDate:q.direction==='inbound'?q.date:q.returnDate,observedAt:new Date().toISOString()};
-  }catch(e){if(/\/login/.test(page.url()))return {status:'failed',code:'LOGIN_REQUIRED'};if(process.env.AWARD_DEBUG==='1')console.error(e);const code=e instanceof Error?e.message:'';return {status:'failed',code:/^[A-Z_]+$/.test(code)?code:'SEARCH_FAILED'};}
+  }catch(e){if(/\/login/.test(page.url()))return {status:'failed',code:'LOGIN_REQUIRED'};if(process.env.AWARD_DEBUG==='1')console.error(e);const code=e instanceof Error?e.message:'';if(code==='REFERENCE_UNAVAILABLE')return {origin:targetOrigin,destination:targetDestination,date:q.returnDate,status:'partial',cabins:[],flights:[],referenceDate:q.date,observedAt:new Date().toISOString(),code};return {status:'failed',code:/^[A-Z_]+$/.test(code)?code:'SEARCH_FAILED'};}
 }
 export async function searchSky(page:Page,q:Query,cancelled:()=>boolean){
   if(q.cabin!=='all')return searchSkyClass(page,q,cancelled);
-  const flights:any[]=[],checkedCabins:string[]=[];let last:any;
+  const flights:any[]=[],checkedCabins:string[]=[];let last:any,partialCode:string|undefined;
   for(const cabin of Object.keys(cabinCodes)){
     const r=await searchSkyClass(page,{...q,cabin},cancelled);
     if(r.status==='failed'){
       if(!flights.length)return r;
       return {...last,status:'partial',flights,cabins:[...new Set(flights.map(f=>f.cabin))],checkedCabins,code:r.code};
     }
-    last=r;flights.push(...r.flights!);checkedCabins.push(cabin);
+    last=r;if(r.status==='partial'){partialCode=r.code;continue;}flights.push(...r.flights!);checkedCabins.push(cabin);
   }
-  return {...last,status:flights.length?'available':'empty',flights,cabins:[...new Set(flights.map(f=>f.cabin))],checkedCabins};
+  return {...last,status:partialCode?'partial':flights.length?'available':'empty',code:partialCode,flights,cabins:[...new Set(flights.map(f=>f.cabin))],checkedCabins};
 }
