@@ -16,16 +16,58 @@ import queue
 import shutil
 import signal
 import subprocess
+import sys
 import threading
 from datetime import date, datetime, timedelta, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 import uuid
 import webbrowser
+from sas_store import SasStore
+from sas_service import SasService, SasError
+from award_service import AwardService
 
 ROOT = Path(__file__).resolve().parent
 SOURCE = "KOREAN_AIR_PUBLIC_AWARD_CALENDAR"
 SOURCE_URL = "https://www.koreanair.com/booking/book-and-manage/award-seat-availability"
+ACCOUNT_PAGES = {
+    "korean-air": "https://www.koreanair.com/booking/search?bookingType=A&tripType=OW",
+    "sas-eurobonus": "https://www.flysas.com/en/eurobonus/points/use/partner-award-flights/",
+    "asiana-club": "https://flyasiana.com/I/KR/KO/MileageSeatSearch.do",
+    "skyteam": "https://www.koreanair.com/booking/search?bookingType=S&tripType=RT",
+    "star-alliance": "https://flyasiana.com/C/KR/KO/contents/book-online?tabId=mileage",
+}
+
+
+def open_account_page(payload):
+    """Open an allowlisted official page in the user's regular Chrome profile."""
+    program = payload.get("program") if isinstance(payload, dict) else None
+    if not isinstance(program, str) or program not in ACCOUNT_PAGES:
+        raise AppError("INVALID_INPUT", "항공사 또는 마일리지 프로그램을 선택해 주세요.")
+    url = ACCOUNT_PAGES[program]
+    if sys.platform == "darwin":
+        command = ["open", "-a", "Google Chrome", url]
+    elif sys.platform == "win32":
+        candidates = [Path(os.environ.get(base, "")) / "Google/Chrome/Application/chrome.exe"
+                      for base in ("PROGRAMFILES", "PROGRAMFILES(X86)", "LOCALAPPDATA")
+                      if os.environ.get(base)]
+        chrome = shutil.which("chrome") or next((str(p) for p in candidates if p.is_file()), None)
+        command = [chrome, url] if chrome else None
+    else:
+        chrome = shutil.which("google-chrome") or shutil.which("google-chrome-stable") or shutil.which("chromium")
+        command = [chrome, url] if chrome else None
+    if not command:
+        raise AppError("CHROME_NOT_FOUND", "Google Chrome을 설치한 뒤 다시 눌러 주세요.", 503)
+    try:
+        process = subprocess.Popen(command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        try:
+            if process.wait(timeout=0.5) != 0:
+                raise OSError("Chrome launch failed")
+        except subprocess.TimeoutExpired:
+            pass  # Chrome stays open on Windows/Linux.
+    except OSError:
+        raise AppError("CHROME_OPEN_FAILED", "Chrome을 열지 못했어요. 설치 상태를 확인해 주세요.", 503)
+    return {"url": url, "message": "Chrome에 공식 사이트를 열었어요. 필요한 경우 해당 사이트에서 로그인해 주세요. 로그인 여부는 이 앱에서 확인하지 않습니다."}
 SEOUL = timezone(timedelta(hours=9))
 CACHE_SECONDS = 12 * 3600
 CABINS = ("economy", "premium", "prestige")
@@ -637,6 +679,9 @@ class LocalServer(ThreadingHTTPServer):
 
     def __init__(self, address, service=None):
         self.service = service or SearchService()
+        self.sas_store = SasStore(self.service.store.root)
+        self.sas_service = SasService(self.service.store.root, self.sas_store)
+        self.award_service = AwardService(self.service.store.root, self.sas_service)
         super().__init__(address, Handler)
 
 
@@ -675,6 +720,30 @@ class Handler(BaseHTTPRequestHandler):
             target = urlparse(self.path)
             if target.path == "/":
                 self.respond((ROOT / "local_web" / "index.html").read_bytes(), html=True)
+            elif target.path == "/award-ui.js":
+                body = (ROOT / "local_web" / "award-ui.js").read_bytes()
+                self.send_response(200)
+                self.send_header("Content-Type", "text/javascript; charset=utf-8")
+                self.send_header("Content-Length", str(len(body)))
+                self.send_header("Cache-Control", "no-store")
+                self.end_headers()
+                self.wfile.write(body)
+            elif target.path == "/api/awards/status":
+                program = parse_qs(target.query).get("program", [""])[-1]
+                self.respond(self.server.award_service.status(program))
+            elif target.path == "/sas-ui.js":
+                body = (ROOT / "local_web" / "sas-ui.js").read_bytes()
+                self.send_response(200)
+                self.send_header("Content-Type", "text/javascript; charset=utf-8")
+                self.send_header("Content-Length", str(len(body)))
+                self.send_header("Cache-Control", "no-store")
+                self.send_header("X-Content-Type-Options", "nosniff")
+                self.end_headers()
+                self.wfile.write(body)
+            elif target.path == "/api/sas/status":
+                self.respond(self.server.sas_service.status())
+            elif target.path == "/api/sas-results":
+                self.respond({"results": self.server.sas_store.list()})
             elif target.path == "/api/health":
                 self.respond({"app": "korean-air-local-award-viewer", "status": "ok"})
             elif target.path == "/api/config":
@@ -689,13 +758,15 @@ class Handler(BaseHTTPRequestHandler):
                 self.respond(self.server.service.get(target.path.rsplit("/", 1)[-1]))
             else:
                 raise AppError("NOT_FOUND", "페이지를 찾을 수 없어요.", 404)
+        except SasError as error:
+            self.respond({"error": {"code": error.code, "message": "조회용 Chrome과 입력 조건을 확인해 주세요."}}, 400)
         except AppError as error:
             self.respond({"error": {"code": error.code, "message": error.message}}, error.status)
 
     def do_POST(self):
         try:
             self.allowed(mutation=True)
-            if self.path not in ("/api/search", "/api/open-airline"):
+            if self.path not in ("/api/search", "/api/open-airline", "/api/open-account", "/api/sas/open", "/api/sas/search", "/api/sas/cancel", "/api/awards/open", "/api/awards/search", "/api/awards/cancel"):
                 raise AppError("NOT_FOUND", "요청한 기능을 찾을 수 없어요.", 404)
             if self.headers.get("Content-Type", "").split(";", 1)[0].strip() != "application/json":
                 raise AppError("INVALID_INPUT", "검색 조건을 확인해 주세요.", 415)
@@ -706,6 +777,28 @@ class Handler(BaseHTTPRequestHandler):
                 payload = json.loads(self.rfile.read(size).decode("utf-8"))
             except (ValueError, UnicodeError):
                 raise AppError("INVALID_INPUT", "검색 조건을 확인해 주세요.")
+            if self.path.startswith("/api/awards/"):
+                if not isinstance(payload, dict): raise SasError("INVALID_QUERY")
+                program = payload.get("program")
+                if self.path.endswith("/open"): result = self.server.award_service.open(program)
+                elif self.path.endswith("/cancel"): result = self.server.award_service.cancel(program)
+                else: result = self.server.award_service.start(payload)
+                self.respond(result)
+                return
+            if self.path.startswith("/api/sas/"):
+                if self.path == "/api/sas/open":
+                    result = self.server.sas_service.open()
+                elif self.path == "/api/sas/cancel":
+                    result = self.server.sas_service.cancel()
+                else:
+                    if not isinstance(payload, dict):
+                        raise SasError("INVALID_QUERY")
+                    result = self.server.sas_service.start(payload.get("items"))
+                self.respond(result)
+                return
+            if self.path == "/api/open-account":
+                self.respond(open_account_page(payload))
+                return
             if self.path == "/api/open-airline":
                 selection = validate_handoff_request(payload)
                 job_id = self.server.service.start_handoff(selection)
@@ -713,6 +806,8 @@ class Handler(BaseHTTPRequestHandler):
                 params = validate_request(payload)
                 job_id = self.server.service.start(params)
             self.respond({"jobId": job_id}, 202)
+        except SasError as error:
+            self.respond({"error": {"code": error.code, "message": "조회용 Chrome과 입력 조건을 확인해 주세요."}}, 400)
         except AppError as error:
             self.respond({"error": {"code": error.code, "message": error.message}}, error.status)
 
@@ -737,6 +832,8 @@ def main():
     except KeyboardInterrupt:
         print("\n로컬 화면을 종료했습니다.")
     finally:
+        server.award_service.close()
+        server.sas_service.close()
         server.server_close()
 
 

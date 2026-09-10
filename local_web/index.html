@@ -22,7 +22,8 @@
       <section class="intro"><div><p class="eyebrow">항공사 마일리지 항공권</p><h1>마일리지로 떠날 날을 찾아보세요</h1><p>지원되는 프로그램의 보너스 좌석 정보를 한눈에 확인해 보세요.</p></div><div class="intro-note">대한항공 공개 달력은 로그인 없이 조회할 수 있어요.<br>내 컴퓨터에서 쓰는 개인용 조회 도구예요.</div></section>
       <section class="panel search-panel" aria-label="조회 조건">
         <form id="search-form">
-          <div class="program-row"><label class="field"><span class="field-label">마일리지 프로그램</span><select id="program" name="program"><option value="korean-air" selected>대한항공 스카이패스</option><option value="sas-eurobonus">SAS 유로보너스</option><option value="asiana-club">아시아나클럽</option><option value="skyteam">스카이팀 제휴 보너스 안내</option></select></label><p class="program-hint" id="program-hint">대한항공 공개 보너스 좌석 달력을 로그인 없이 조회합니다.</p></div>
+          <div class="program-row"><label class="field"><span class="field-label">마일리지 프로그램</span><select id="program" name="program"><option value="korean-air" selected>대한항공 스카이패스</option><option value="sas-eurobonus">SAS 유로보너스</option><option value="asiana-club">아시아나클럽</option><option value="skyteam">스카이팀 · 대한항공 마일리지</option><option value="star-alliance">스타얼라이언스 · 아시아나 마일리지</option></select></label><p class="program-hint" id="program-hint">대한항공 공개 보너스 좌석 달력을 로그인 없이 조회합니다.</p></div>
+          <div style="margin-bottom:20px"><button type="button" class="provider-link" id="open-account-button" style="margin-top:0;border:0">대한항공 로그인·예약 열기 ↗</button><p class="program-hint" style="margin:8px 0 0" id="account-note">조회용 Chrome에서 로그인합니다. 공개 좌석 달력 조회에는 로그인이 필요 없습니다.</p><p class="program-hint" id="account-status" role="status" aria-live="polite" style="margin:8px 0 0"></p></div>
           <div id="korean-search-controls">
           <div class="form-top"><fieldset class="trip-options"><legend class="sr-only">여정 종류</legend><label><input type="radio" name="tripType" value="ONE_WAY" checked><span>편도</span></label><label><input type="radio" name="tripType" value="ROUND_TRIP"><span>왕복</span></label></fieldset><span class="form-hint">조건을 바꾸면 저장된 결과를 보여드려요.</span></div>
           <div class="search-grid">
@@ -42,6 +43,26 @@
         </form>
         <div class="status" id="status" role="status" aria-live="polite"><span class="status-dot" aria-hidden="true"></span><span id="status-text">조회 화면을 준비하고 있어요.</span></div>
       </section>
+      <section id="award-area" hidden style="margin-top:24px">
+        <div class="panel search-panel">
+          <h2 id="award-title">월별 마일리지 좌석 조회</h2>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin:16px 0"><button id="award-open" class="provider-link" type="button">로그인·조회 창 열기</button><button id="award-refresh" class="provider-link" type="button">연결 상태 확인</button><button id="award-cancel" class="provider-link" type="button" disabled>조회 중단</button></div>
+          <p id="award-connection" role="status"></p>
+          <form id="award-form">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:14px">
+              <label class="field"><span class="field-label">여정</span><select id="award-trip"><option value="ONE_WAY">편도</option><option value="ROUND_TRIP">왕복</option></select></label>
+              <label class="field"><span class="field-label">출발 공항</span><input id="award-origin" value="ICN" maxlength="3" pattern="[A-Za-z]{3}" list="airports" required></label>
+              <label class="field"><span class="field-label">도착 공항</span><input id="award-destination" value="NRT" maxlength="3" pattern="[A-Za-z]{3}" list="airports" required></label>
+              <label class="field"><span class="field-label">가는 달</span><select id="award-month"></select></label>
+              <label class="field" id="award-return-field" hidden><span class="field-label">오는 달</span><select id="award-return-month"></select></label>
+              <label class="field"><span class="field-label">좌석 등급</span><select id="award-cabin"><option value="all">전체</option><option value="economy">일반석</option><option value="premium economy">프리미엄 이코노미</option><option value="business">비즈니스</option><option value="first">일등석</option></select></label>
+            </div>
+            <p id="award-scope" class="program-hint"></p><button id="award-search" class="primary">선택한 월 새로 조회</button>
+          </form>
+          <p id="award-note" class="program-hint"></p><div id="award-progress" class="status" role="status">조회 전입니다.</div>
+        </div>
+        <div id="award-results" style="margin-top:24px"></div>
+      </section>
       <section aria-labelledby="results-title" id="results-area" aria-busy="false">
         <div class="results-header"><div><h2 id="results-title">마일리지 좌석 조회 결과</h2><p id="results-description">원하는 노선과 월을 선택한 뒤 조회해 주세요.</p></div><a class="source-link official-link" href="https://www.koreanair.com/booking/book-and-manage/award-seat-availability" target="_blank" rel="noopener noreferrer">대한항공 홈페이지 ↗</a></div>
         <div id="results"><div class="panel empty"><div class="empty-icon" aria-hidden="true">▦</div><strong>이전에 조회한 결과를 불러오고 있어요.</strong><p>최근 조회한 결과가 있으면 다시 사용할 수 있어요.</p></div></div>
@@ -60,9 +81,10 @@
     const cabinKeys = {economy:'economyAward', premium:'premiumAward', prestige:'prestigeAward'};
     const providers = {
       'korean-air': {name:'대한항공 스카이패스', hint:'대한항공 공개 보너스 좌석 달력을 로그인 없이 조회합니다.'},
-      'sas-eurobonus': {name:'SAS 유로보너스', hint:'SAS 공식 사이트에서 보너스 항공권과 제휴 항공사 좌석을 확인합니다.', description:'SAS 유로보너스 보너스 항공권은 SAS 공식 조회·예약 경로에서 확인해 주세요.', note:'이 프로그램에는 SAS 좌석 데이터를 수집하거나 저장하는 기능이 없습니다.', url:'https://www.flysas.com/en/eurobonus/points/use/partner-award-flights/', action:'SAS 공식 안내 열기 ↗'},
-      'asiana-club': {name:'아시아나클럽', hint:'아시아나클럽의 공식 마일리지 항공권 경로를 안내합니다.', description:'아시아나클럽 마일리지 항공권의 실제 좌석은 아시아나 공식 조회·예약 경로에서 확인해 주세요.', note:'이 프로그램에는 아시아나 좌석 데이터를 수집하거나 저장하는 기능이 없습니다.', url:'https://flyasiana.com/C/KR/KO/contents/book-online?tabId=mileage', action:'아시아나 공식 안내 열기 ↗'},
-      skyteam: {name:'스카이팀 제휴 보너스', hint:'스카이팀은 마일리지 프로그램이 아니라 항공 동맹입니다.', description:'스카이팀 자체 마일리지는 없습니다. 스카이패스·유로보너스처럼 보유한 마일리지 프로그램을 골라 해당 항공사의 공식 경로에서 확인해 주세요.', note:'대한항공 스카이패스로 스카이팀 제휴 보너스를 이용하려면 대한항공의 공식 안내를 확인해 주세요.', url:'https://www.koreanair.com/contents/skypass/use-miles/partner-airlines/skyteam-award/guide', action:'대한항공 스카이팀 안내 열기 ↗'}
+      'sas-eurobonus': {name:'SAS 유로보너스', hint:'SAS 공식 사이트에서 보너스 항공권과 제휴 항공사 좌석을 확인합니다.', description:'SAS 유로보너스 보너스 항공권은 SAS 공식 조회·예약 경로에서 확인해 주세요.', note:'사용자가 로그인한 조회용 Chrome에서 검색하고 결과를 이 컴퓨터에 저장합니다.', url:'https://www.flysas.com/en/eurobonus/points/use/partner-award-flights/', action:'SAS 공식 안내 열기 ↗'},
+      'asiana-club': {name:'아시아나클럽', hint:'아시아나 공개 마일리지 좌석 달력을 월별로 조회합니다.', description:'아시아나클럽 마일리지 항공권의 실제 좌석은 아시아나 공식 조회·예약 경로에서 확인해 주세요.', note:'공개 현황에 표시된 일반석·비즈니스 보너스 좌석을 가져옵니다.', url:'https://flyasiana.com/I/KR/KO/MileageSeatSearch.do', action:'아시아나 좌석 조회 열기 ↗'},
+      'star-alliance': {name:'스타얼라이언스 제휴 보너스', hint:'아시아나클럽 마일리지로 스타얼라이언스 항공편을 확인합니다.', description:'아시아나 공식 사이트에서 로그인한 뒤 스타얼라이언스 탭을 선택해 주세요.', note:'아시아나 로그인 후 공식 검색 결과를 날짜별로 가져옵니다.', url:'https://flyasiana.com/C/KR/KO/contents/book-online?tabId=mileage', action:'아시아나 스타얼라이언스 예약 경로 열기 ↗'},
+      skyteam: {name:'스카이팀 제휴 보너스', hint:'대한항공 마일리지로 스카이팀 왕복 보너스 항공편을 조회합니다.', description:'스카이팀 자체 마일리지는 없습니다. 스카이패스·유로보너스처럼 보유한 마일리지 프로그램을 골라 해당 항공사의 공식 경로에서 확인해 주세요.', note:'대한항공 스카이패스로 스카이팀 제휴 보너스를 이용하려면 대한항공의 공식 안내를 확인해 주세요.', url:'https://www.koreanair.com/contents/skypass/use-miles/partner-airlines/skyteam-award/guide', action:'대한항공 스카이팀 안내 열기 ↗'}
     };
     const airportNames = Object.fromEntries(Array.from($('airports').options, option => [option.value, option.label]));
     const fallbackAirports = Object.entries(airportNames).map(([code,name]) => ({code,name,region:''}));
@@ -77,11 +99,21 @@
     function renderProviderInfo() {
       const provider = selectedProgram(), koreanAir = koreanAirSelected();
       $('korean-search-controls').hidden = !koreanAir;
-      $('provider-info').hidden = koreanAir;
+      $('provider-info').hidden = true;
+      $('award-area').hidden = koreanAir;
+      window.AwardLocal?.activate(fields.program.value);
       $('results-area').hidden = !koreanAir;
       $('program-hint').textContent = provider.hint;
+      $('open-account-button').textContent = ({'korean-air':'대한항공 로그인·예약 열기 ↗','sas-eurobonus':'SAS 로그인·예약 열기 ↗','asiana-club':'아시아나 좌석 조회 열기 ↗',skyteam:'대한항공 로그인·스카이팀 예약 열기 ↗','star-alliance':'아시아나 로그인·예약 경로 열기 ↗'})[fields.program.value];
+      $('account-note').textContent = koreanAir ? '대한항공과 스카이팀은 같은 조회용 Chrome의 로그인을 공유합니다. 공개 달력 조회에는 로그인이 필요 없습니다.' : '조회용 Chrome에서 로그인한 뒤 아래에서 월별 좌석을 검색합니다. 아시아나 공개 달력은 로그인 없이 조회합니다.';
+      $('account-status').textContent = '';
       const footer = $('footer-note');
-      footer.replaceChildren(node('span',null,koreanAir ? '대한항공이 공개한 좌석 현황을 보여드려요. 실제 예약 가능 여부와 잔여 좌석은 대한항공에서 확인해 주세요.' : '이 프로그램은 ' + provider.name + '의 좌석 현황을 수집하거나 저장하지 않습니다.'),node('br'),node('span',null,koreanAir ? '선택한 날짜로 열면 새 Chrome 창에 조건을 입력해 드려요. 실제 예약은 대한항공에서 진행해 주세요.' : '실제 예약 가능 여부는 공식 조회·예약 경로에서 확인해 주세요.'));
+      footer.replaceChildren(node('span',null,koreanAir ? '대한항공이 공개한 좌석 현황을 보여드려요. 실제 예약 가능 여부와 잔여 좌석은 대한항공에서 확인해 주세요.' : '선택한 조건으로 조회한 결과입니다. 조회 실패와 좌석 표시 없음을 구분해 주세요.'),node('br'),node('span',null,koreanAir ? '선택한 날짜로 열면 새 Chrome 창에 조건을 입력해 드려요. 실제 예약은 대한항공에서 진행해 주세요.' : '실제 예약 가능 여부는 공식 조회·예약 경로에서 확인해 주세요.'));
+      if(fields.program.value === 'sas-eurobonus') {
+        $('program-hint').textContent = 'SAS 조회용 Chrome에서 선택한 노선·기간을 순서대로 조회해요.';
+        $('account-note').textContent = 'SAS 조회용 창에서 한 번 로그인하면 이 컴퓨터에서 유지돼요. 성인 1명 기준이며, 왕복은 가는 편과 오는 편을 각각 검색해요.';
+        footer.textContent = 'SAS 화면을 읽은 시점의 결과예요. 세금·수수료는 별도이며, 예약 가능 여부는 SAS에서 다시 확인해 주세요.';
+      }
       if(koreanAir) return;
       $('provider-info-title').textContent = provider.name;
       $('provider-info-description').textContent = provider.description;
@@ -93,7 +125,8 @@
       clearTimeout(cacheTimer); ++cacheVersion;
       renderProviderInfo();
       if(koreanAirSelected()) { updateTripControls(); void readCache(); }
-      else setStatus('선택한 프로그램의 공식 조회 경로를 안내합니다. 이 프로그램에서 좌석 현황을 수집하거나 저장하지 않아요.');
+      else if(fields.program.value === 'sas-eurobonus') setStatus('아래 SAS 연결 상태를 확인한 뒤 조회해 주세요.');
+      else setStatus('아래에서 출발·도착, 월, 좌석 등급을 선택해 조회해 주세요.');
       syncControls();
     }
     function tripType() { return form.elements.tripType.value; }
@@ -424,7 +457,22 @@
       writeAirport('origin',destination); writeAirport('destination',origin); closeAirport('origin'); closeAirport('destination');
       updateRouteNote(); scheduleCache();
     });
+    $('open-account-button').addEventListener('click', async () => {
+      if(!koreanAirSelected()) { await window.AwardLocal?.open(); return; }
+      const button = $('open-account-button'); button.disabled = true;
+      $('account-status').textContent = 'Chrome을 열고 있어요.';
+      try { const result = await api('/api/awards/open',{method:'POST',body:JSON.stringify({program:'korean-air'})}); $('account-status').textContent = '대한항공과 스카이팀이 로그인 상태를 함께 사용하는 조회 창을 열었습니다.'; }
+      catch(error) { $('account-status').textContent = error.message; }
+      finally { button.disabled = false; }
+    });
     async function init() {
+      if(location.protocol === 'file:') {
+        form.hidden = true; $('results-area').hidden = true;
+        setStatus('파일을 직접 열면 조회 기능을 사용할 수 없어요. 서버를 실행한 뒤 아래 주소로 접속해 주세요.');
+        const link = node('a','provider-link','로컬 조회 화면 열기 ↗');
+        link.href = 'http://127.0.0.1:8765/'; $('status').after(link);
+        return;
+      }
       try {
         config = await api('/api/config');
         populateMonthChoices();
@@ -440,5 +488,6 @@
     }
     init();
   </script>
+  <script src="/award-ui.js"></script>
 </body>
 </html>

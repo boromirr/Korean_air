@@ -1175,6 +1175,36 @@ class HttpBoundaryTests(unittest.TestCase):
             start.assert_called_once_with(selection)
         self.collector.assert_not_called()
 
+    def test_sas_receipts_are_same_origin_only_and_reject_invalid_results(self):
+        status, _, body = self.request("GET", "/api/sas-results")
+        self.assertEqual(status, 200)
+        self.assertEqual(body, {"results": []})
+        status, _, _ = self.request("POST", "/api/sas-results", {"status": "empty"})
+        self.assertEqual(status, 403)
+        status, _, _ = self.request("POST", "/api/sas-results", {"status": "empty"}, {"Origin": self.origin})
+        self.assertEqual(status, 404)
+        self.assertEqual(self.server.sas_store.list(), [])
+
+    def test_account_page_requires_same_origin_post(self):
+        with mock.patch.object(app, "open_account_page") as launch:
+            for method, headers in [("GET", {}), ("POST", {}), ("POST", {"Origin": "https://example.com"})]:
+                status, _, _ = self.request(method, "/api/open-account", {"program": "korean-air"}, headers)
+                self.assertIn(status, (403, 404))
+            launch.assert_not_called()
+
+    def test_account_page_opens_only_allowlisted_url(self):
+        with mock.patch.object(app.sys, "platform", "darwin"), mock.patch.object(app.subprocess, "Popen") as launch:
+            launch.return_value.wait.return_value = 0
+            status, _, body = self.request("POST", "/api/open-account", {"program": "korean-air", "url": "https://example.com"}, {"Origin": self.origin})
+            self.assertEqual(status, 200)
+            self.assertEqual(launch.call_args.args[0], ["open", "-a", "Google Chrome", app.ACCOUNT_PAGES["korean-air"]])
+            self.assertNotIn("loggedIn", body)
+            launch.reset_mock()
+            for payload in ({"program": "unknown"}, {"program": []}, []):
+                status, _, _ = self.request("POST", "/api/open-account", payload, {"Origin": self.origin})
+                self.assertEqual(status, 400)
+            launch.assert_not_called()
+
     def test_handoff_cannot_be_triggered_by_get(self):
         with mock.patch.object(self.service, "start_handoff") as start:
             status, _, _ = self.request("GET", "/api/open-airline?" + urlencode(handoff_selection()))
