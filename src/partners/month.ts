@@ -1,13 +1,14 @@
 import type {BrowserContext,Page} from 'playwright';
 import {searchStar} from './star-alliance.js';
 import {searchSky} from './skyteam.js';
+import {awardConcurrency} from '../cloud-runtime.js';
 type Query=Parameters<typeof searchSky>[1];
 export async function searchPartnerMonth(context:BrowserContext,program:string,queries:Query[],cancelled:()=>boolean,emit:(event:unknown)=>void){
   let next=0,code:string|undefined,completed=0;
   const pages=new Set<Page>(),stopped=()=>cancelled()||Boolean(code);
   const cancellationTimer=setInterval(()=>{if(cancelled())for(const p of pages)void p.close().catch(()=>{});},200);
   try{
-    await Promise.all(Array.from({length:Math.min(6,queries.length)},async()=>{
+    await Promise.all(Array.from({length:Math.min(awardConcurrency(),queries.length)},async()=>{
       const page=await context.newPage();pages.add(page);
       try{
         while(!stopped()&&next<queries.length){

@@ -95,7 +95,9 @@ export async function collectMonth(month: string, headless = false, options: Col
   validateFutureMonth(month);
   const { origin = 'ICN', destination = 'JFK', captureArtifacts = true } = options;
   validateRoute(origin, destination);
-  const browser = await chromium.launch({ channel: 'chrome', headless });
+  const browser = await chromium.launch({ channel: 'chrome', headless,
+    args: process.env.CHROME_DISABLE_SANDBOX === '1' ? ['--no-sandbox', '--disable-dev-shm-usage'] : [],
+  });
   const context = await browser.newContext({
     locale: 'ko-KR', timezoneId: 'Asia/Seoul', viewport: { width: 1440, height: 1100 },
   });

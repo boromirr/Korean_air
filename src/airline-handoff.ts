@@ -398,7 +398,9 @@ export async function openAirlineHandoff(input: unknown, report: (result: Handof
   try {
     selection = normalizeHandoffSelection(input);
     initialStage = 'browser_open';
-    browser = await chromium.launch({ channel: 'chrome', headless: false });
+    browser = await chromium.launch({ channel: 'chrome', headless: false,
+      args: process.env.CHROME_DISABLE_SANDBOX === '1' ? ['--no-sandbox', '--disable-dev-shm-usage'] : [],
+    });
     const context = await browser.newContext({ locale: 'ko-KR', timezoneId: 'Asia/Seoul', viewport: { width: 1440, height: 1100 } });
     page = await context.newPage();
     page.setDefaultTimeout(15_000);

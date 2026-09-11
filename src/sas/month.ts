@@ -1,6 +1,7 @@
 import type {BrowserContext,Page} from 'playwright';
 import {searchSas,type SasQuery} from './search.js';
-export const SAS_CONCURRENCY=6;
+import {awardConcurrency} from '../cloud-runtime.js';
+export const SAS_CONCURRENCY=awardConcurrency();
 export async function searchSasMonth(context:BrowserContext,queries:SasQuery[],cancelled:()=>boolean,emit:(event:unknown)=>void) {
   let next=0,code:string|undefined,completed=0;
   const pages=new Set<Page>();

@@ -58,6 +58,8 @@ def open_account_page(payload):
         command = [chrome, url] if chrome else None
     if not command:
         raise AppError("CHROME_NOT_FOUND", "Google Chrome을 설치한 뒤 다시 눌러 주세요.", 503)
+    if sys.platform == "linux" and os.environ.get("CHROME_DISABLE_SANDBOX") == "1":
+        command[1:1] = ["--no-sandbox", "--disable-dev-shm-usage"]
     try:
         process = subprocess.Popen(command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         try:
@@ -691,6 +693,25 @@ class Handler(BaseHTTPRequestHandler):
     def log_message(self, *_args):
         pass
 
+    def web_asset(self, name):
+        content = (ROOT / "local_web" / name).read_text(encoding="utf-8")
+        if os.environ.get("AWARD_CLOUD_MODE") == "1":
+            for before, after in (
+                ("내 컴퓨터에서 쓰는 개인용 조회 도구예요.", "나만 사용하는 마일리지 좌석 조회예요."),
+                ("내 컴퓨터에서 쓰는 개인용 조회", "개인용 마일리지 좌석 조회"),
+                ("각 사용자의 컴퓨터에", "개인 조회 서버에"),
+                ("이 컴퓨터에서", "개인 조회 서버에서"),
+                ("이 컴퓨터에", "개인 조회 서버에"),
+                ("새 Chrome 창", "항공사 로그인 창"),
+                ("열린 Chrome 창", "상단의 항공사 로그인 창"),
+                ("Chrome 창에서", "상단의 항공사 로그인 창에서"),
+                ("조회용 Chrome에서", "상단의 항공사 로그인 창에서"),
+            ):
+                content = content.replace(before, after)
+            if name == "index.html":
+                content = content.replace("</body>", '<script src="/cloud-ui.js"></script></body>')
+        return content.encode("utf-8")
+
     def allowed(self, mutation=False):
         port = self.server.server_port
         hosts = {"127.0.0.1:%d" % port, "localhost:%d" % port}
@@ -719,9 +740,17 @@ class Handler(BaseHTTPRequestHandler):
             self.allowed()
             target = urlparse(self.path)
             if target.path == "/":
-                self.respond((ROOT / "local_web" / "index.html").read_bytes(), html=True)
+                self.respond(self.web_asset("index.html"), html=True)
+            elif target.path == "/cloud-ui.js" and os.environ.get("AWARD_CLOUD_MODE") == "1":
+                body = self.web_asset("cloud-ui.js")
+                self.send_response(200)
+                self.send_header("Content-Type", "text/javascript; charset=utf-8")
+                self.send_header("Content-Length", str(len(body)))
+                self.send_header("Cache-Control", "no-store")
+                self.end_headers()
+                self.wfile.write(body)
             elif target.path == "/award-ui.js":
-                body = (ROOT / "local_web" / "award-ui.js").read_bytes()
+                body = self.web_asset("award-ui.js")
                 self.send_response(200)
                 self.send_header("Content-Type", "text/javascript; charset=utf-8")
                 self.send_header("Content-Length", str(len(body)))
@@ -732,7 +761,7 @@ class Handler(BaseHTTPRequestHandler):
                 program = parse_qs(target.query).get("program", [""])[-1]
                 self.respond(self.server.award_service.status(program))
             elif target.path == "/sas-ui.js":
-                body = (ROOT / "local_web" / "sas-ui.js").read_bytes()
+                body = self.web_asset("sas-ui.js")
                 self.send_response(200)
                 self.send_header("Content-Type", "text/javascript; charset=utf-8")
                 self.send_header("Content-Length", str(len(body)))

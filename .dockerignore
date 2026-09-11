@@ -1,0 +1,13 @@
+.git
+.openai
+.sites-runtime
+node_modules
+dist
+data
+artifacts
+.env
+.env.*
+!\.env.example
+__pycache__
+*.pyc
+tests

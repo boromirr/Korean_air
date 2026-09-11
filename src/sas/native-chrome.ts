@@ -34,6 +34,7 @@ async function availablePort(): Promise<number> {
 export function chromeArguments(profile: string, port: number): string[] {
   if(!Number.isInteger(port) || port<1024 || port>65535) throw new Error('INVALID_PORT');
   return [`--user-data-dir=${profile}`, '--remote-debugging-address=127.0.0.1', `--remote-debugging-port=${port}`,
+    ...(process.env.CHROME_DISABLE_SANDBOX === '1' ? ['--no-sandbox', '--disable-dev-shm-usage'] : []),
     '--no-first-run', '--no-default-browser-check', '--new-window', 'about:blank'];
 }
 export async function openNativeChrome(profile: string, options:{keepRunning?:boolean}={}): Promise<{browser:Browser,context:BrowserContext,process:ChildProcess|null,close:()=>Promise<void>}> {
