@@ -13,7 +13,8 @@
 - `cloud/serve.py`: 프로세스 감독, loopback 서비스 연결, 토큰 인증 gateway
 - `cloud/site-worker.mjs`: 소유자 전용 Sites에서 HTTP와 WebSocket 전달
 - `local_web/cloud-ui.js`: 모바일 글자 크기, 항공사 로그인 창 연결
-- `railway.json`: Docker build 및 healthcheck
+- Railway 서비스 설정: `site/railway` 브랜치, Dockerfile `cloud/Dockerfile`, healthcheck `/healthz`.
+  새 서비스에서는 지원이 종료된 `railway.json` 대신 연결된 Railway 서비스 설정을 사용합니다.
 
 Railway는 반드시 단일 replica로 실행합니다. 모든 로그인 세션은 사이트 소유자 1명의 세션입니다.
 다중 사용자 서비스로 공개하지 마세요. noVNC, CDP, VNC, Python 포트를 별도로 외부에 노출하지 않습니다.
