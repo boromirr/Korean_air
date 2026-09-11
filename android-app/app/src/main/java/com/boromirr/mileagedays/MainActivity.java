@@ -33,6 +33,7 @@ public final class MainActivity extends Activity {
     private LinearLayout results, details;
     private SharedPreferences prefs;
     private volatile boolean dead;
+    private boolean busy;
     private volatile AwardClient client;
     private AwardCore.CalendarResult current;
     private LocalDate selected;
@@ -83,7 +84,7 @@ public final class MainActivity extends Activity {
         results = column(); root.addView(results,space(0,16));
         Button official = button("대한항공 공개 좌석 현황 열기 ↗",false); root.addView(official,space(dp(52),18)); official.setOnClickListener(v -> open(AwardCore.PUBLIC_PAGE));
         root.addView(text("공개된 가능 여부이며 잔여 좌석 수가 아닙니다. 일등석은 보너스·승급이 합쳐진 표시입니다. 최종 예약 가능 여부는 대한항공에서 확인해 주세요.",12,MUTED,false),space(0,18));
-        root.addView(text("개인용 비공식 앱 · 0.1.0\n조회 조건은 이 휴대폰에만 저장됩니다.",11,MUTED,false),space(0,12));
+        root.addView(text("개인용 비공식 앱 · 0.1.1\n조회 조건은 이 휴대폰에만 저장됩니다.",11,MUTED,false),space(0,12));
     }
     private void loadAirports() {
         try (InputStream in = getAssets().open("airports.json")) {
@@ -93,7 +94,7 @@ public final class MainActivity extends Activity {
             for(int i=0;i<list.length();i++) { JSONObject a=list.getJSONObject(i);airports.put(a.getString("code"),a.getString("name")); }
         } catch(Exception e) { airports.put("ICN","서울/인천"); airports.put("JFK","뉴욕/존 F. 케네디"); }
     }
-    private String airportLabel(String code) { return airports.get(code)+" ("+code+")"; }
+    private String airportLabel(String code) { return airports.containsKey(code)?airports.get(code)+" ("+code+")":code; }
     private AutoCompleteTextView airportField() {
         AutoCompleteTextView field = new AutoCompleteTextView(this); field.setSingleLine(true); field.setTextSize(17); field.setTextColor(INK); field.setMinHeight(dp(52)); field.setPadding(dp(12),dp(6),dp(12),dp(6)); field.setBackground(shape(BG,dp(10),0)); field.setThreshold(1); field.setHint("공항 이름 또는 ICN 등 코드");
         field.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
@@ -107,12 +108,20 @@ public final class MainActivity extends Activity {
         throw new AwardCore.Failure("INVALID_AIRPORT","목록에서 공항을 고르거나 영문 공항 코드 3자를 입력해 주세요.");
     }
     private void search() {
+        if(busy) return;
         final AwardCore.Query query;
         try { query = new AwardCore.Query(airportCode(origin),airportCode(destination),months.get(month.getSelectedItemPosition()),AwardCore.today()); }
         catch(AwardCore.Failure e) { notice.setText(e.getMessage()); notice.setTextColor(AMBER); return; }
+        startSearch(query);
+    }
+    private void startSearch(AwardCore.Query query) {
+        if(busy || dead) return;
         prefs.edit().putString("origin",origin.getText().toString()).putString("destination",destination.getText().toString()).putString("month",query.month.toString()).putInt("cabin",cabin.getSelectedItemPosition()).apply();
         ((InputMethodManager)getSystemService(INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(origin.getWindowToken(),0);
+        results.setMinimumHeight(results.getHeight());
         current = null; selected = null; errorText = null; results.removeAllViews(); setBusy(true);
+        LinearLayout loading = card(); results.addView(loading); addMonthHeader(loading,query);
+        loading.addView(text("이 달의 좌석 현황을 조회하고 있습니다…",14,MUTED,false),space(0,16));
         notice.setText(query.origin+" → "+query.destination+" · "+query.month+"\n휴대폰에서 대한항공에 직접 요청하는 중…"); notice.setTextColor(MUTED);
         final AwardClient request = new AwardClient(); client = request;
         // Whole-request deadline complements connection/read timeouts.
@@ -123,22 +132,53 @@ public final class MainActivity extends Activity {
             deadline.cancel(false);
             final AwardCore.CalendarResult result = data; final AwardCore.Failure error = failure;
             runOnUiThread(() -> {
-                if(dead) return; client = null; setBusy(false);
+                if(dead) return; client = null; setBusy(false); results.setMinimumHeight(0);
                 if(error!=null) { renderFailure(query,error); return; }
                 current = result; selected = null; renderCalendar();
             });
         });
     }
     private void setBusy(boolean busy) {
+        this.busy = busy;
         search.setEnabled(!busy); search.setText(busy?"조회 중…":"휴대폰에서 좌석 조회"); origin.setEnabled(!busy); destination.setEnabled(!busy); month.setEnabled(!busy); swap.setEnabled(!busy);
+    }
+    private boolean canChangeMonth(YearMonth target) {
+        LocalDate today = AwardCore.today();
+        return months.contains(target) && !target.isBefore(YearMonth.from(today)) && !target.isAfter(YearMonth.from(today.plusDays(359)));
+    }
+    private void changeMonth(AwardCore.Query displayed,int offset) {
+        if(busy || dead) return;
+        YearMonth target = displayed.month.plusMonths(offset);
+        if(!canChangeMonth(target)) return;
+        try {
+            AwardCore.Query query = new AwardCore.Query(displayed.origin,displayed.destination,target,AwardCore.today());
+            // Keep the displayed route and cabin; don't depend on Spinner callbacks to start a request.
+            origin.setText(airportLabel(query.origin),false); destination.setText(airportLabel(query.destination),false);
+            month.setSelection(months.indexOf(target));
+            startSearch(query);
+        } catch(AwardCore.Failure e) { Toast.makeText(this,e.getMessage(),Toast.LENGTH_LONG).show(); }
+    }
+    private void addMonthHeader(LinearLayout container,AwardCore.Query query) {
+        container.addView(text(query.origin+" → "+query.destination,14,MUTED,true));
+        LinearLayout navigation = row(); container.addView(navigation,space(dp(52),10));
+        Button previous = button("‹",false); previous.setTextSize(28); previous.setContentDescription("이전 달");
+        previous.setEnabled(!busy && canChangeMonth(query.month.minusMonths(1))); previous.setAlpha(previous.isEnabled()?1f:.3f);
+        previous.setOnClickListener(v -> changeMonth(query,-1)); navigation.addView(previous,new LinearLayout.LayoutParams(dp(48),dp(48)));
+        TextView title = text(query.month.getYear()+"년 "+query.month.getMonthValue()+"월",19,INK,true); title.setGravity(Gravity.CENTER);
+        navigation.addView(title,new LinearLayout.LayoutParams(0,-2,1));
+        Button next = button("›",false); next.setTextSize(28); next.setContentDescription("다음 달");
+        next.setEnabled(!busy && canChangeMonth(query.month.plusMonths(1))); next.setAlpha(next.isEnabled()?1f:.3f);
+        next.setOnClickListener(v -> changeMonth(query,1)); navigation.addView(next,new LinearLayout.LayoutParams(dp(48),dp(48)));
     }
     private void renderFailure(AwardCore.Query query,AwardCore.Failure error) {
         notice.setText("좌석 현황을 가져오지 못했습니다"); notice.setTextColor(AMBER);
+        results.removeAllViews();
         LinearLayout box = card(); results.addView(box);
-        box.addView(text(error.code,13,AMBER,true)); box.addView(text(error.getMessage(),16,INK,true),space(0,10));
+        addMonthHeader(box,query);
+        box.addView(text(error.code,13,AMBER,true),space(0,16)); box.addView(text(error.getMessage(),16,INK,true),space(0,10));
         box.addView(text("조회가 실패했으므로 이 결과로 좌석 유무를 판단할 수 없습니다.",14,MUTED,false),space(0,10));
         String time = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss").withZone(AwardCore.KOREA).format(Instant.now());
-        errorText = "마일리지 달력 0.1.0\n"+query.origin+" → "+query.destination+" / "+query.month+"\n"+time+" KST\n"+error.code+"\n"+error.getMessage();
+        errorText = "마일리지 달력 0.1.1\n"+query.origin+" → "+query.destination+" / "+query.month+"\n"+time+" KST\n"+error.code+"\n"+error.getMessage();
         Button copy = button("오류 정보 복사",false); box.addView(copy,space(dp(48),14)); copy.setOnClickListener(v -> {
             ((ClipboardManager)getSystemService(CLIPBOARD_SERVICE)).setPrimaryClip(ClipData.newPlainText("좌석 조회 오류",errorText)); Toast.makeText(this,"오류 정보를 복사했습니다",Toast.LENGTH_SHORT).show();
         });
@@ -150,7 +190,7 @@ public final class MainActivity extends Activity {
         for(AwardCore.Day day:current.days) if(AwardCore.inRange(day.date,today)) { if(day.indicator(code)==1) yes++; if(day.indicator(code)==-1) unknown++; }
         notice.setText("대한항공 응답 확인 · "+DateTimeFormatter.ofPattern("MM.dd HH:mm:ss").withZone(AwardCore.KOREA).format(current.fetchedAt)+" KST\n표시된 시각에 받은 현황입니다."); notice.setTextColor(MUTED);
         LinearLayout calendar = card(); results.addView(calendar);
-        calendar.addView(text(current.query.origin+" → "+current.query.destination+"  ·  "+current.query.month.getMonthValue()+"월",21,INK,true));
+        addMonthHeader(calendar,current.query);
         calendar.addView(text(CABINS[cabin.getSelectedItemPosition()]+" · 가능 표시 "+yes+"일"+(unknown>0?" · 자료 없음 "+unknown+"일":""),13,BLUE,true),space(0,8));
         calendar.addView(text("파랑: 가능 표시  ·  —: 표시 없음  ·  ?: 자료 없음",11,MUTED,false),space(0,12));
         String[] weekdays = {"일","월","화","수","목","금","토"}; LinearLayout week = row(); calendar.addView(week,space(0,14));
