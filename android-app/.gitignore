@@ -1,0 +1,8 @@
+build/
+.signing/
+*.jks
+*.keystore
+*.apk
+*.idsig
+tests/*.jar
+__pycache__/

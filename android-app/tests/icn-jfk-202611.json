@@ -1,0 +1,1838 @@
+{
+  "departureAirport": "ICN",
+  "arrivalAirport": "JFK",
+  "departureAirportName": "서울/인천, 대한민국",
+  "arrivalAirportName": "뉴욕/존 F. 케네디, NY, 미국",
+  "flightList": [
+    {
+      "departureDate": "20261101",
+      "flightDetailList": [
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        }
+      ]
+    },
+    {
+      "departureDate": "20261102",
+      "flightDetailList": [
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        }
+      ]
+    },
+    {
+      "departureDate": "20261103",
+      "flightDetailList": [
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": true,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        }
+      ]
+    },
+    {
+      "departureDate": "20261104",
+      "flightDetailList": [
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": true,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        }
+      ]
+    },
+    {
+      "departureDate": "20261105",
+      "flightDetailList": [
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": true,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        }
+      ]
+    },
+    {
+      "departureDate": "20261106",
+      "flightDetailList": [
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": true,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        }
+      ]
+    },
+    {
+      "departureDate": "20261107",
+      "flightDetailList": [
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        }
+      ]
+    },
+    {
+      "departureDate": "20261108",
+      "flightDetailList": [
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        }
+      ]
+    },
+    {
+      "departureDate": "20261109",
+      "flightDetailList": [
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        }
+      ]
+    },
+    {
+      "departureDate": "20261110",
+      "flightDetailList": [
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        }
+      ]
+    },
+    {
+      "departureDate": "20261111",
+      "flightDetailList": [
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": true,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        }
+      ]
+    },
+    {
+      "departureDate": "20261112",
+      "flightDetailList": [
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        }
+      ]
+    },
+    {
+      "departureDate": "20261113",
+      "flightDetailList": [
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        }
+      ]
+    },
+    {
+      "departureDate": "20261114",
+      "flightDetailList": [
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        }
+      ]
+    },
+    {
+      "departureDate": "20261115",
+      "flightDetailList": [
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        }
+      ]
+    },
+    {
+      "departureDate": "20261116",
+      "flightDetailList": [
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        }
+      ]
+    },
+    {
+      "departureDate": "20261117",
+      "flightDetailList": [
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        }
+      ]
+    },
+    {
+      "departureDate": "20261118",
+      "flightDetailList": [
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": true,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        }
+      ]
+    },
+    {
+      "departureDate": "20261119",
+      "flightDetailList": [
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": true,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        }
+      ]
+    },
+    {
+      "departureDate": "20261120",
+      "flightDetailList": [
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        }
+      ]
+    },
+    {
+      "departureDate": "20261121",
+      "flightDetailList": [
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        }
+      ]
+    },
+    {
+      "departureDate": "20261122",
+      "flightDetailList": [
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        }
+      ]
+    },
+    {
+      "departureDate": "20261123",
+      "flightDetailList": [
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        }
+      ]
+    },
+    {
+      "departureDate": "20261124",
+      "flightDetailList": [
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        }
+      ]
+    },
+    {
+      "departureDate": "20261125",
+      "flightDetailList": [
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        }
+      ]
+    },
+    {
+      "departureDate": "20261126",
+      "flightDetailList": [
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": true,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        }
+      ]
+    },
+    {
+      "departureDate": "20261127",
+      "flightDetailList": [
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        }
+      ]
+    },
+    {
+      "departureDate": "20261128",
+      "flightDetailList": [
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        }
+      ]
+    },
+    {
+      "departureDate": "20261129",
+      "flightDetailList": [
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        }
+      ]
+    },
+    {
+      "departureDate": "20261130",
+      "flightDetailList": [
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "10:00",
+          "flightNumber": "KE081",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": true,
+          "bookingClass": "X",
+          "frontBookingClass": "E"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "O",
+          "frontBookingClass": "P"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "Z",
+          "frontBookingClass": "U"
+        },
+        {
+          "departureTime": "19:40",
+          "flightNumber": "KE085",
+          "availableSeat": false,
+          "bookingClass": "A",
+          "frontBookingClass": "F"
+        }
+      ]
+    }
+  ]
+}

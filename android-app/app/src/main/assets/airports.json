@@ -1,0 +1,592 @@
+{
+  "sourceUrl": "https://www.koreanair.com/booking/book-and-manage/award-seat-availability",
+  "retrievedAt": "2026-09-07T10:42:35+00:00",
+  "airports": [
+    {
+      "code": "ICN",
+      "name": "서울/인천",
+      "region": "대한민국"
+    },
+    {
+      "code": "GMP",
+      "name": "서울/김포",
+      "region": "대한민국"
+    },
+    {
+      "code": "PUS",
+      "name": "부산/김해",
+      "region": "대한민국"
+    },
+    {
+      "code": "CJU",
+      "name": "제주",
+      "region": "대한민국"
+    },
+    {
+      "code": "KWJ",
+      "name": "광주",
+      "region": "대한민국"
+    },
+    {
+      "code": "KUV",
+      "name": "군산",
+      "region": "대한민국"
+    },
+    {
+      "code": "TAE",
+      "name": "대구",
+      "region": "대한민국"
+    },
+    {
+      "code": "RSU",
+      "name": "여수/순천",
+      "region": "대한민국"
+    },
+    {
+      "code": "USN",
+      "name": "울산",
+      "region": "대한민국"
+    },
+    {
+      "code": "WJU",
+      "name": "원주",
+      "region": "대한민국"
+    },
+    {
+      "code": "HIN",
+      "name": "진주/사천",
+      "region": "대한민국"
+    },
+    {
+      "code": "CJJ",
+      "name": "청주",
+      "region": "대한민국"
+    },
+    {
+      "code": "KPO",
+      "name": "포항/경주",
+      "region": "대한민국"
+    },
+    {
+      "code": "KOJ",
+      "name": "가고시마",
+      "region": "동북아시아"
+    },
+    {
+      "code": "KMQ",
+      "name": "고마쓰",
+      "region": "동북아시아"
+    },
+    {
+      "code": "UKB",
+      "name": "고베",
+      "region": "동북아시아"
+    },
+    {
+      "code": "CAN",
+      "name": "광저우",
+      "region": "동북아시아"
+    },
+    {
+      "code": "KMJ",
+      "name": "구마모토",
+      "region": "동북아시아"
+    },
+    {
+      "code": "KKJ",
+      "name": "기타큐슈",
+      "region": "동북아시아"
+    },
+    {
+      "code": "NGS",
+      "name": "나가사키",
+      "region": "동북아시아"
+    },
+    {
+      "code": "NGO",
+      "name": "나고야",
+      "region": "동북아시아"
+    },
+    {
+      "code": "NKG",
+      "name": "난징",
+      "region": "동북아시아"
+    },
+    {
+      "code": "KIJ",
+      "name": "니가타",
+      "region": "동북아시아"
+    },
+    {
+      "code": "DLC",
+      "name": "다롄",
+      "region": "동북아시아"
+    },
+    {
+      "code": "NRT",
+      "name": "도쿄/나리타",
+      "region": "동북아시아"
+    },
+    {
+      "code": "HND",
+      "name": "도쿄/하네다",
+      "region": "동북아시아"
+    },
+    {
+      "code": "MFM",
+      "name": "마카오",
+      "region": "동북아시아"
+    },
+    {
+      "code": "SHI",
+      "name": "미야코지마",
+      "region": "동북아시아"
+    },
+    {
+      "code": "PEK",
+      "name": "베이징/서우두",
+      "region": "동북아시아"
+    },
+    {
+      "code": "CTS",
+      "name": "삿포로/치토세",
+      "region": "동북아시아"
+    },
+    {
+      "code": "PVG",
+      "name": "상하이/푸동",
+      "region": "동북아시아"
+    },
+    {
+      "code": "SHA",
+      "name": "상하이/홍차오",
+      "region": "동북아시아"
+    },
+    {
+      "code": "XMN",
+      "name": "샤먼",
+      "region": "동북아시아"
+    },
+    {
+      "code": "SHE",
+      "name": "선양",
+      "region": "동북아시아"
+    },
+    {
+      "code": "SZX",
+      "name": "선전",
+      "region": "동북아시아"
+    },
+    {
+      "code": "XIY",
+      "name": "시안/셴양",
+      "region": "동북아시아"
+    },
+    {
+      "code": "AOJ",
+      "name": "아오모리",
+      "region": "동북아시아"
+    },
+    {
+      "code": "YNJ",
+      "name": "옌지",
+      "region": "동북아시아"
+    },
+    {
+      "code": "KIX",
+      "name": "오사카/간사이",
+      "region": "동북아시아"
+    },
+    {
+      "code": "OKJ",
+      "name": "오카야마",
+      "region": "동북아시아"
+    },
+    {
+      "code": "OKA",
+      "name": "오키나와",
+      "region": "동북아시아"
+    },
+    {
+      "code": "URC",
+      "name": "우루무치",
+      "region": "동북아시아"
+    },
+    {
+      "code": "WUH",
+      "name": "우한",
+      "region": "동북아시아"
+    },
+    {
+      "code": "WEH",
+      "name": "웨이하이",
+      "region": "동북아시아"
+    },
+    {
+      "code": "DYG",
+      "name": "장자제",
+      "region": "동북아시아"
+    },
+    {
+      "code": "CGO",
+      "name": "정저우",
+      "region": "동북아시아"
+    },
+    {
+      "code": "CSX",
+      "name": "창사",
+      "region": "동북아시아"
+    },
+    {
+      "code": "TAO",
+      "name": "칭다오",
+      "region": "동북아시아"
+    },
+    {
+      "code": "KMG",
+      "name": "쿤밍",
+      "region": "동북아시아"
+    },
+    {
+      "code": "TPE",
+      "name": "타이베이/타오위엔",
+      "region": "동북아시아"
+    },
+    {
+      "code": "RMQ",
+      "name": "타이중",
+      "region": "동북아시아"
+    },
+    {
+      "code": "TSN",
+      "name": "톈진",
+      "region": "동북아시아"
+    },
+    {
+      "code": "FOC",
+      "name": "푸저우",
+      "region": "동북아시아"
+    },
+    {
+      "code": "HGH",
+      "name": "항저우",
+      "region": "동북아시아"
+    },
+    {
+      "code": "HFE",
+      "name": "허페이",
+      "region": "동북아시아"
+    },
+    {
+      "code": "HKG",
+      "name": "홍콩",
+      "region": "동북아시아"
+    },
+    {
+      "code": "FUK",
+      "name": "후쿠오카",
+      "region": "동북아시아"
+    },
+    {
+      "code": "HIJ",
+      "name": "히로시마",
+      "region": "동북아시아"
+    },
+    {
+      "code": "CXR",
+      "name": "나트랑",
+      "region": "동남아시아/서남아시아"
+    },
+    {
+      "code": "DAD",
+      "name": "다낭",
+      "region": "동남아시아/서남아시아"
+    },
+    {
+      "code": "DPS",
+      "name": "덴파사르 (발리)",
+      "region": "동남아시아/서남아시아"
+    },
+    {
+      "code": "DEL",
+      "name": "델리",
+      "region": "동남아시아/서남아시아"
+    },
+    {
+      "code": "MNL",
+      "name": "마닐라",
+      "region": "동남아시아/서남아시아"
+    },
+    {
+      "code": "BKK",
+      "name": "방콕/수완나품",
+      "region": "동남아시아/서남아시아"
+    },
+    {
+      "code": "CEB",
+      "name": "세부",
+      "region": "동남아시아/서남아시아"
+    },
+    {
+      "code": "SIN",
+      "name": "싱가포르/창이",
+      "region": "동남아시아/서남아시아"
+    },
+    {
+      "code": "RGN",
+      "name": "양곤",
+      "region": "동남아시아/서남아시아"
+    },
+    {
+      "code": "CGK",
+      "name": "자카르타/수카르노 하타",
+      "region": "동남아시아/서남아시아"
+    },
+    {
+      "code": "CNX",
+      "name": "치앙마이",
+      "region": "동남아시아/서남아시아"
+    },
+    {
+      "code": "KTM",
+      "name": "카트만두",
+      "region": "동남아시아/서남아시아"
+    },
+    {
+      "code": "BKI",
+      "name": "코타키나발루",
+      "region": "동남아시아/서남아시아"
+    },
+    {
+      "code": "CMB",
+      "name": "콜롬보",
+      "region": "동남아시아/서남아시아"
+    },
+    {
+      "code": "KUL",
+      "name": "쿠알라룸푸르",
+      "region": "동남아시아/서남아시아"
+    },
+    {
+      "code": "CRK",
+      "name": "클락/앙헬레스",
+      "region": "동남아시아/서남아시아"
+    },
+    {
+      "code": "HKT",
+      "name": "푸껫",
+      "region": "동남아시아/서남아시아"
+    },
+    {
+      "code": "PQC",
+      "name": "푸꾸옥",
+      "region": "동남아시아/서남아시아"
+    },
+    {
+      "code": "KTI",
+      "name": "프놈펜/떼쪼",
+      "region": "동남아시아/서남아시아"
+    },
+    {
+      "code": "HAN",
+      "name": "하노이",
+      "region": "동남아시아/서남아시아"
+    },
+    {
+      "code": "SGN",
+      "name": "호찌민",
+      "region": "동남아시아/서남아시아"
+    },
+    {
+      "code": "JFK",
+      "name": "뉴욕/존 F. 케네디, NY",
+      "region": "미주"
+    },
+    {
+      "code": "DFW",
+      "name": "댈러스/포트워스, TX",
+      "region": "미주"
+    },
+    {
+      "code": "LAS",
+      "name": "라스베이거스/해리 리드, NV",
+      "region": "미주"
+    },
+    {
+      "code": "LAX",
+      "name": "로스앤젤레스, CA",
+      "region": "미주"
+    },
+    {
+      "code": "YVR",
+      "name": "밴쿠버, BC",
+      "region": "미주"
+    },
+    {
+      "code": "BOS",
+      "name": "보스턴,MA",
+      "region": "미주"
+    },
+    {
+      "code": "SFO",
+      "name": "샌프란시스코, CA",
+      "region": "미주"
+    },
+    {
+      "code": "SEA",
+      "name": "시애틀/터코마, WA",
+      "region": "미주"
+    },
+    {
+      "code": "ORD",
+      "name": "시카고/오헤어, IL",
+      "region": "미주"
+    },
+    {
+      "code": "ATL",
+      "name": "애틀랜타/하츠필드잭슨, GA",
+      "region": "미주"
+    },
+    {
+      "code": "IAD",
+      "name": "워싱턴/덜레스, DC",
+      "region": "미주"
+    },
+    {
+      "code": "YYZ",
+      "name": "토론토/피어슨, ON",
+      "region": "미주"
+    },
+    {
+      "code": "HNL",
+      "name": "호놀룰루 (하와이), HI",
+      "region": "미주"
+    },
+    {
+      "code": "LHR",
+      "name": "런던/히스로",
+      "region": "유럽"
+    },
+    {
+      "code": "FCO",
+      "name": "로마/레오나르도 다빈치",
+      "region": "유럽"
+    },
+    {
+      "code": "LIS",
+      "name": "리스본",
+      "region": "유럽"
+    },
+    {
+      "code": "MAD",
+      "name": "마드리드",
+      "region": "유럽"
+    },
+    {
+      "code": "MXP",
+      "name": "밀라노/말펜사",
+      "region": "유럽"
+    },
+    {
+      "code": "BUD",
+      "name": "부다페스트",
+      "region": "유럽"
+    },
+    {
+      "code": "VIE",
+      "name": "비엔나",
+      "region": "유럽"
+    },
+    {
+      "code": "AMS",
+      "name": "암스테르담/스키폴",
+      "region": "유럽"
+    },
+    {
+      "code": "IST",
+      "name": "이스탄불",
+      "region": "유럽"
+    },
+    {
+      "code": "ZRH",
+      "name": "취리히",
+      "region": "유럽"
+    },
+    {
+      "code": "CDG",
+      "name": "파리/샤를 드 골",
+      "region": "유럽"
+    },
+    {
+      "code": "PRG",
+      "name": "프라하",
+      "region": "유럽"
+    },
+    {
+      "code": "FRA",
+      "name": "프랑크푸르트",
+      "region": "유럽"
+    },
+    {
+      "code": "GUM",
+      "name": "괌",
+      "region": "대양주/괌"
+    },
+    {
+      "code": "MEL",
+      "name": "멜버른",
+      "region": "대양주/괌"
+    },
+    {
+      "code": "BNE",
+      "name": "브리즈번",
+      "region": "대양주/괌"
+    },
+    {
+      "code": "SYD",
+      "name": "시드니/킹즈퍼드 스미스",
+      "region": "대양주/괌"
+    },
+    {
+      "code": "AKL",
+      "name": "오클랜드",
+      "region": "대양주/괌"
+    },
+    {
+      "code": "SVO",
+      "name": "모스크바/셰레메체보",
+      "region": "러시아/몽골/중앙아시아"
+    },
+    {
+      "code": "VVO",
+      "name": "블라디보스토크",
+      "region": "러시아/몽골/중앙아시아"
+    },
+    {
+      "code": "LED",
+      "name": "상트페테르부르크/풀코보",
+      "region": "러시아/몽골/중앙아시아"
+    },
+    {
+      "code": "UBN",
+      "name": "울란바타르/칭기즈칸 국제공항",
+      "region": "러시아/몽골/중앙아시아"
+    },
+    {
+      "code": "IKT",
+      "name": "이르쿠츠크",
+      "region": "러시아/몽골/중앙아시아"
+    },
+    {
+      "code": "DXB",
+      "name": "두바이",
+      "region": "중동/아프리카"
+    },
+    {
+      "code": "TLV",
+      "name": "텔아비브/벤 구리온",
+      "region": "중동/아프리카"
+    }
+  ],
+  "destinations": {}
+}
